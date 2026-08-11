@@ -1,0 +1,3 @@
+# Docker
+
+Docker configuration placeholder.
