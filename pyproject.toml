@@ -1,0 +1,9 @@
+[project]
+name = "aira-os"
+version = "0.5.0"
+description = "AIRA OS architecture components"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
