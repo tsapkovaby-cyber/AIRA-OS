@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+from types import SimpleNamespace
 from urllib.request import urlopen
 
 import pytest
@@ -9,6 +10,44 @@ from backend.integrations.telegram.config import TelegramConfig
 from backend.integrations.telegram.conversation import AIRAConversationService, InMemoryConversationStore
 from backend.integrations.telegram.gateway import IncomingMessage, START, TECHNICAL_ERROR, TelegramGateway
 from backend.integrations.telegram.intelligence import AIRAIntelligenceProvider, AIRA_SYSTEM_INSTRUCTIONS
+
+
+def test_openai_async_client_constructor_is_httpx_compatible():
+    from openai import AsyncOpenAI
+
+    client = AsyncOpenAI(api_key="test")
+    assert client.api_key == "test"
+    asyncio.run(client.close())
+
+
+def test_openai_provider_uses_responses_api():
+    from backend.integrations.telegram.intelligence import OpenAIResponsesProvider
+
+    provider = OpenAIResponsesProvider("test", "test-model")
+
+    class FakeResponses:
+        def __init__(self):
+            self.request = None
+
+        async def create(self, **kwargs):
+            self.request = kwargs
+            return SimpleNamespace(output_text=" AIRA response ")
+
+    responses = FakeResponses()
+    provider._client.responses = responses
+    messages = [{"role": "user", "content": "Hello"}]
+
+    try:
+        result = asyncio.run(provider.generate_response(messages))
+    finally:
+        asyncio.run(provider._client.close())
+
+    assert result == "AIRA response"
+    assert responses.request == {
+        "model": "test-model",
+        "instructions": AIRA_SYSTEM_INSTRUCTIONS,
+        "input": messages,
+    }
 
 
 class FakeProvider(AIRAIntelligenceProvider):
