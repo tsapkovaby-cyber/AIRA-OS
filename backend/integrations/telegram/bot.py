@@ -10,6 +10,7 @@ from .config import TelegramConfig
 from .conversation import AIRAConversationService, InMemoryConversationStore
 from .gateway import TelegramGateway
 from .handlers import error_handler, make_message_handler
+from .health import start_health_server
 from .intelligence import OpenAIResponsesProvider
 
 
@@ -35,15 +36,17 @@ def main() -> None:
     config.validate_runtime()
     app = build_application(config)
     if config.delivery_mode == "polling":
+        start_health_server(config, config.webhook_port)
         app.run_polling(drop_pending_updates=False)
     else:
         assert config.webhook_url
         app.run_webhook(
             listen="0.0.0.0", port=config.webhook_port,
+            url_path="telegram",
             webhook_url=config.webhook_url,
+            secret_token=config.webhook_secret,
         )
 
 
 if __name__ == "__main__":
     main()
-

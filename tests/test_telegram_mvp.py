@@ -1,5 +1,7 @@
 import asyncio
+import json
 import logging
+from urllib.request import urlopen
 
 import pytest
 
@@ -18,7 +20,7 @@ class FakeProvider(AIRAIntelligenceProvider):
 
 
 def config(founder=42, privacy=None):
-    return TelegramConfig("tg-secret", "ai-secret", founder, "test-model", privacy, "polling", None, 8080)
+    return TelegramConfig("tg-secret", "ai-secret", founder, "test-model", privacy, "polling", None, None, 8080)
 
 
 def gateway(provider=None, founder=42, privacy=None):
@@ -87,6 +89,40 @@ def test_health_has_no_secrets():
     response = send(gw, "/health")
     assert "готов" in response
     assert "secret" not in response
+
+
+def test_render_health_endpoint_is_secret_free():
+    from backend.integrations.telegram.health import start_health_server
+
+    server = start_health_server(config(), 0)
+    try:
+        with urlopen(f"http://127.0.0.1:{server.server_port}/health") as response:
+            health = json.load(response)
+        assert health == {
+            "status": "running",
+            "telegram_configured": True,
+            "ai_provider_configured": True,
+            "delivery_mode": "polling",
+        }
+        assert "secret" not in json.dumps(health)
+    finally:
+        server.shutdown()
+        server.server_close()
+
+
+def test_bootstrap_configuration_allows_missing_founder_id(monkeypatch):
+    monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "token")
+    monkeypatch.setenv("OPENAI_API_KEY", "key")
+    monkeypatch.delenv("AIRA_FOUNDER_TELEGRAM_ID", raising=False)
+    TelegramConfig.from_env().validate_runtime()
+
+
+def test_webhook_requires_secret(monkeypatch):
+    monkeypatch.setenv("TELEGRAM_DELIVERY_MODE", "webhook")
+    monkeypatch.setenv("TELEGRAM_WEBHOOK_URL", "https://example.test/telegram")
+    monkeypatch.delenv("TELEGRAM_WEBHOOK_SECRET", raising=False)
+    with pytest.raises(ValueError, match="TELEGRAM_WEBHOOK_SECRET"):
+        TelegramConfig.from_env()
 
 
 class FailedTelegramMessage:

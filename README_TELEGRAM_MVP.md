@@ -45,11 +45,12 @@ Production webhook mode (do not run a polling instance at the same time):
 ```bash
 export TELEGRAM_DELIVERY_MODE=webhook
 export TELEGRAM_WEBHOOK_URL=https://your-host.example/telegram
+export TELEGRAM_WEBHOOK_SECRET=<set-in-your-secret-manager>
 export PORT=8080
 python -m backend.integrations.telegram.bot
 ```
 
-Only one delivery mode is selected per process. The public URL must be HTTPS and route to the configured port.
+Only one delivery mode is selected per process. The public URL must be HTTPS and route to the configured port. The webhook secret is validated through Telegram's secret-token header; it is never placed in a URL.
 
 ## Test
 
@@ -65,4 +66,3 @@ Manual acceptance test in `@AIRA_influenser_bot`:
 3. Check `/start`, `/help`, `/privacy`, `/health`, and `/delete_my_data`.
 
 Conversation state is process-local and is lost on restart. `/delete_my_data` deletes the requester's local state only; it does not claim deletion by Telegram or OpenAI.
-
