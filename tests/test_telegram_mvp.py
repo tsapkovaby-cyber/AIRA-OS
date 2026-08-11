@@ -1,6 +1,8 @@
 import asyncio
 import json
 import logging
+import sys
+from types import SimpleNamespace
 from urllib.request import urlopen
 
 import pytest
@@ -143,3 +145,35 @@ def test_telegram_failure_is_swallowed(caplog):
         asyncio.run(make_message_handler(gw)(Update(), None))
     assert "telegram delivery failed" in caplog.text
     assert "telegram-token-secret" not in caplog.text
+
+
+def test_async_openai_constructor_accepts_current_httpx_stack():
+    openai = pytest.importorskip("openai")
+    client = openai.AsyncOpenAI(api_key="test")
+    assert client is not None
+
+
+def test_openai_responses_provider_uses_existing_contract(monkeypatch):
+    captured = {}
+
+    class FakeResponses:
+        async def create(self, **kwargs):
+            captured.update(kwargs)
+            return SimpleNamespace(output_text="  Готово  ")
+
+    class FakeAsyncOpenAI:
+        def __init__(self, api_key):
+            captured["api_key"] = api_key
+            self.responses = FakeResponses()
+
+    monkeypatch.setitem(sys.modules, "openai", SimpleNamespace(AsyncOpenAI=FakeAsyncOpenAI))
+    from backend.integrations.telegram.intelligence import OpenAIResponsesProvider
+
+    provider = OpenAIResponsesProvider("test-key", "test-model")
+    result = asyncio.run(provider.generate_response([{"role": "user", "content": "Привет"}]))
+
+    assert result == "Готово"
+    assert captured["api_key"] == "test-key"
+    assert captured["model"] == "test-model"
+    assert captured["instructions"] == AIRA_SYSTEM_INSTRUCTIONS
+    assert captured["input"] == [{"role": "user", "content": "Привет"}]
