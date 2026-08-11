@@ -15,6 +15,7 @@ class TelegramConfig:
     privacy_policy_url: str | None
     delivery_mode: str
     webhook_url: str | None
+    webhook_secret: str | None
     webhook_port: int
 
     @classmethod
@@ -31,6 +32,9 @@ class TelegramConfig:
         webhook_url = os.getenv("TELEGRAM_WEBHOOK_URL", "").strip() or None
         if mode == "webhook" and not webhook_url:
             raise ValueError("TELEGRAM_WEBHOOK_URL is required in webhook mode")
+        webhook_secret = os.getenv("TELEGRAM_WEBHOOK_SECRET", "").strip() or None
+        if mode == "webhook" and not webhook_secret:
+            raise ValueError("TELEGRAM_WEBHOOK_SECRET is required in webhook mode")
         return cls(
             bot_token=os.getenv("TELEGRAM_BOT_TOKEN", "").strip(),
             openai_api_key=os.getenv("OPENAI_API_KEY", "").strip(),
@@ -39,6 +43,7 @@ class TelegramConfig:
             privacy_policy_url=os.getenv("PRIVACY_POLICY_URL", "").strip() or None,
             delivery_mode=mode,
             webhook_url=webhook_url,
+            webhook_secret=webhook_secret,
             webhook_port=int(os.getenv("PORT", "8080")),
         )
 
@@ -47,6 +52,7 @@ class TelegramConfig:
             "status": "running",
             "telegram_configured": bool(self.bot_token),
             "ai_provider_configured": bool(self.openai_api_key and self.model),
+            "delivery_mode": self.delivery_mode,
         }
 
     def validate_runtime(self) -> None:
@@ -55,8 +61,5 @@ class TelegramConfig:
             missing.append("TELEGRAM_BOT_TOKEN")
         if not self.openai_api_key:
             missing.append("OPENAI_API_KEY")
-        if self.founder_telegram_id is None:
-            missing.append("AIRA_FOUNDER_TELEGRAM_ID")
         if missing:
             raise ValueError("Missing required configuration: " + ", ".join(missing))
-
