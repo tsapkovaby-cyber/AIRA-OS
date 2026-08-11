@@ -1,0 +1,3 @@
+import { NextResponse } from "next/server"; import { z } from "zod";
+const Login=z.object({email:z.string().email(),password:z.string().min(8)});
+export async function POST(req:Request){const parsed=Login.safeParse(await req.json());if(!parsed.success||parsed.data.email!=="founder@aira.local"||parsed.data.password!=="founder-demo")return NextResponse.json({error:{code:"UNAUTHORIZED",referenceId:"AUTH-401"}},{status:401});const response=NextResponse.json({user:{id:"founder-01",role:"OWNER"}});response.cookies.set("aira_session","demo-owner-session",{httpOnly:true,sameSite:"strict",secure:process.env.NODE_ENV==="production",maxAge:3600,path:"/"});return response}

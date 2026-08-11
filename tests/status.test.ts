@@ -1,0 +1,2 @@
+import {describe,it,expect} from 'vitest';import {statusLabel,canPerform} from '@/lib/status';
+describe('dashboard policy presentation',()=>{it('maps every system state to text',()=>{expect(statusLabel('SYSTEM_CRITICAL')).toBe('Critical');expect(statusLabel('SYSTEM_PAUSED')).toBe('Paused')});it('hides sensitive actions from non-owner roles',()=>{expect(canPerform('VIEWER','EMERGENCY_STOP')).toBe(false);expect(canPerform('OWNER','EMERGENCY_STOP')).toBe(true)})});
