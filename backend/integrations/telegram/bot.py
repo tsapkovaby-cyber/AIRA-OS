@@ -12,15 +12,17 @@ from .gateway import TelegramGateway
 from .handlers import error_handler, make_message_handler
 from .health import start_health_server
 from .intelligence import OpenAIResponsesProvider
+from backend.education import EducationAPI
+from backend.education.telegram import TelegramEducationAdapter
 
 
 def build_application(config: TelegramConfig) -> Application:
     provider = OpenAIResponsesProvider(config.openai_api_key, config.model)
     conversation = AIRAConversationService(provider, InMemoryConversationStore())
-    gateway = TelegramGateway(config, conversation)
+    gateway = TelegramGateway(config, conversation, TelegramEducationAdapter(EducationAPI()))
     app = Application.builder().token(config.bot_token).build()
     handler = make_message_handler(gateway)
-    for command in ("start", "help", "privacy", "delete_my_data", "health"):
+    for command in ("start", "help", "learn", "privacy", "delete_my_data", "health"):
         app.add_handler(CommandHandler(command, handler))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handler))
     app.add_error_handler(error_handler)
