@@ -1,0 +1,22 @@
+{
+  "id": "rel_s004_documents_engine",
+  "sourceNodeId": "node_s004_architecture_report",
+  "targetNodeId": "node_knowledge_graph_engine",
+  "type": "DOCUMENTED_IN",
+  "strength": 0.95,
+  "reason": "The Sprint S004 architecture report documents the Knowledge Graph Engine design and approval status.",
+  "evidence": [
+    {
+      "id": "evidence_s004_report",
+      "sourceType": "document",
+      "citation": "docs/sprints/S004/architecture-report.md",
+      "summary": "Architecture report captures requirements, decisions, scope boundaries, and approval gate.",
+      "confidence": 1.0,
+      "observedDate": "2026-07-15T00:00:00Z"
+    }
+  ],
+  "createdDate": "2026-07-15T00:00:00Z",
+  "version": "1.0.0",
+  "confidence": 0.95,
+  "visibility": "internal"
+}
