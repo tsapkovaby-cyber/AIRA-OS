@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: aira-telegram-mvp
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m backend.integrations.telegram.bot
+    healthCheckPath: /health
+    autoDeploy: true
+    numInstances: 1
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: TELEGRAM_DELIVERY_MODE
+        value: polling
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: AIRA_FOUNDER_TELEGRAM_ID
+        sync: false
+      - key: AIRA_MODEL
+        sync: false
+      - key: PRIVACY_POLICY_URL
+        sync: false
