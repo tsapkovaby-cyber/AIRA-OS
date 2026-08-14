@@ -1,0 +1,17 @@
+"""Versioned Sprint 020 experiment benchmark."""
+from dataclasses import dataclass
+
+@dataclass(frozen=True)
+class VideoBenchmark:
+    benchmark_id: str; scenarios: tuple[str, ...]; metrics: tuple[str, ...]
+
+AIRA_VIDEO_BENCHMARK_V1 = VideoBenchmark(
+    "AIRA_VIDEO_BENCHMARK_V1",
+    ("01_STATIC_TALKING_HEAD","02_SOFT_SMILE_SPEECH","03_HEAD_TURN","04_HAND_GESTURE",
+     "05_SITTING_WORKSPACE","06_WALKING","07_CAMERA_PUSH_IN","08_LONG_SPEECH",
+     "09_RUSSIAN_LIPSYNC","10_ENGLISH_TERMS_LIPSYNC","11_HAIR_MOTION",
+     "12_IDENTITY_STABILITY_30_SEC"),
+    ("FACE_IDENTITY","TEMPORAL_IDENTITY","LIP_SYNC","VOICE_SYNC","MOTION_NATURALNESS",
+     "EXPRESSION_NATURALNESS","EYE_BEHAVIOR","HAND_QUALITY","HAIR_CONTINUITY",
+     "CLOTHING_CONTINUITY","CAMERA_CONTROL","PROMPT_FOLLOWING","COST","LATENCY"),
+)
