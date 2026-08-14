@@ -7,22 +7,7 @@ starts workers, sends notifications, or integrates with calendars.
 from __future__ import annotations
 
 from .dependencies import DependencyEngine
-from .models import (
-    AgentCapability,
-    ComplexityEstimate,
-    ExecutionPlan,
-    ExecutionStrategy,
-    Goal,
-    GoalType,
-    PlanStatus,
-    PlanningLevel,
-    Priority,
-    ProgressReport,
-    Task,
-    TaskStatus,
-    Workflow,
-)
-
+from .models import AgentCapability, ComplexityEstimate, ExecutionPlan, ExecutionStrategy, Goal, GoalType, PlanStatus, PlanningLevel, Priority, ProgressReport, Task, TaskStatus, Workflow
 
 DEFAULT_AGENTS = (
     AgentCapability("Research Agent", ("research", "source_analysis"), 2),
@@ -42,15 +27,7 @@ class PlannerEngine:
         self.dependencies = DependencyEngine()
         self.plans: dict[str, ExecutionPlan] = {}
 
-    def create_goal(
-        self,
-        title: str,
-        objective: str,
-        goal_type: GoalType,
-        level: PlanningLevel,
-        success_criteria: tuple[str, ...] = (),
-        constraints: tuple[str, ...] = (),
-    ) -> Goal:
+    def create_goal(self, title: str, objective: str, goal_type: GoalType, level: PlanningLevel, success_criteria: tuple[str, ...] = (), constraints: tuple[str, ...] = ()) -> Goal:
         return Goal(title, objective, goal_type, level, success_criteria=success_criteria, constraints=constraints)
 
     def generate_plan(self, goal: Goal) -> ExecutionPlan:
@@ -71,12 +48,21 @@ class PlannerEngine:
         plan.dependency_issues = self.dependencies.validate(plan.tasks)
         return plan
 
-    def approve_plan(self, plan_id: str) -> ExecutionPlan:
+    @staticmethod
+    def _require_founder(actor: str) -> None:
+        if actor != "founder":
+            raise PermissionError("Only the Founder may approve or reject a plan")
+
+    def approve_plan(self, plan_id: str, actor: str = "founder") -> ExecutionPlan:
+        self._require_founder(actor)
         plan = self._get_plan(plan_id)
+        if plan.status != PlanStatus.WAITING_FOUNDER_APPROVAL:
+            raise ValueError("plan must be waiting for Founder approval")
         plan.approve()
         return plan
 
-    def reject_plan(self, plan_id: str, reason: str) -> ExecutionPlan:
+    def reject_plan(self, plan_id: str, reason: str, actor: str = "founder") -> ExecutionPlan:
+        self._require_founder(actor)
         plan = self._get_plan(plan_id)
         plan.reject(reason)
         return plan
@@ -96,11 +82,7 @@ class PlannerEngine:
 
     def search_plans(self, query: str) -> list[ExecutionPlan]:
         query_lower = query.lower()
-        return [
-            plan
-            for plan in self.plans.values()
-            if query_lower in plan.goal.title.lower() or query_lower in plan.goal.objective.lower()
-        ]
+        return [plan for plan in self.plans.values() if query_lower in plan.goal.title.lower() or query_lower in plan.goal.objective.lower()]
 
     def track_progress(self, plan_id: str) -> ProgressReport:
         plan = self._get_plan(plan_id)
@@ -116,11 +98,7 @@ class PlannerEngine:
     def generate_report(self, plan_id: str) -> str:
         progress = self.track_progress(plan_id)
         plan = self._get_plan(plan_id)
-        return (
-            f"Plan {plan.plan_id} for {plan.goal.title}: "
-            f"{progress.completed} completed, {progress.remaining} remaining, "
-            f"{progress.blocked} blocked, forecast={progress.forecast}"
-        )
+        return f"Plan {plan.plan_id} for {plan.goal.title}: {progress.completed} completed, {progress.remaining} remaining, {progress.blocked} blocked, forecast={progress.forecast}"
 
     def request_approval(self, plan_id: str) -> ExecutionPlan:
         plan = self._get_plan(plan_id)
@@ -143,13 +121,12 @@ class PlannerEngine:
         tasks: list[Task] = []
         previous_id: str | None = None
         for index, phase in enumerate(workflow.phases, start=1):
-            agent = self._agent_for_phase(phase)
             task = Task(
                 title=f"{index}. {phase}: {goal.title}",
                 description=f"Plan the {phase.lower()} phase for objective: {goal.objective}",
                 priority=self._priority_for_goal(goal),
                 owner="Planner Engine",
-                agent=agent,
+                agent=self._agent_for_phase(phase),
                 estimate=ComplexityEstimate(estimated_duration_minutes=60, difficulty=min(goal.level.value + 1, 5), risk=2, confidence=0.7),
                 status=TaskStatus.PLANNED,
                 dependencies={previous_id} if previous_id and workflow.strategy == ExecutionStrategy.SEQUENTIAL else set(),
