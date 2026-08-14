@@ -11,6 +11,7 @@ from backend.telegram.application.ports import AiraCoreGateway
 from backend.telegram.callbacks.signer import CallbackSigner, InvalidCallback
 
 from .approvals import STALE_APPROVAL, execute_signed_action
+from .auth import Role
 from .gateway import DENIED, IncomingMessage, TECHNICAL_ERROR, TelegramGateway
 
 LOGGER = logging.getLogger(__name__)
@@ -50,7 +51,7 @@ def make_callback_handler(
         if query is None or user is None:
             return
         try:
-            if gateway.auth.role_for(user.id).value != "founder":
+            if gateway.auth.role_for(user.id) is not Role.FOUNDER:
                 await query.answer(DENIED, show_alert=True)
                 return
             text = await execute_signed_action(
