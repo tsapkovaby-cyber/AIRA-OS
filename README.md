@@ -19,6 +19,4 @@ Integration priorities are:
 5. integrate Perception, Telegram gateway, AIRA Academy and the Live Language Classroom;
 6. run regression tests before promoting the integrated system to `main`.
 
-Sprint 002 contributes the architecture-first AIRA Core contracts for Identity, Decision, Memory, Knowledge, Research, Content, Guardian, and Growth. These contracts are intentionally provider-agnostic and are being integrated without replacing the working Telegram/runtime baseline.
-
 Secrets and private user data must never be committed to this repository. See `SECURITY.md`.
