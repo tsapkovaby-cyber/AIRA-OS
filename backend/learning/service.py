@@ -10,9 +10,11 @@ class PrerequisiteNotMet(LearningError): pass
 class LearningPlatformService:
     def __init__(self,*,tutor:TutorPort|None=None,memory:LearningMemoryPort|None=None)->None:
         self.students:dict[str,Student]={};self.profiles:dict[str,LearningProfile]={};self.courses:dict[str,Course]={};self.enrollments:dict[tuple[str,str],Enrollment]={};self.results:list[ExerciseResult]=[];self.tutor=tutor or FakeTutor();self.memory=memory or InMemoryLearningMemory()
-    def create_student(self)->Student: student=Student();self.students[student.id]=student;return student
+    def create_student(self)->Student:
+        student=Student();self.students[student.id]=student;return student
     def get_student(self,student_id:str)->Student:return self._student(student_id)
-    def update_profile(self,profile:LearningProfile)->LearningProfile:self._student(profile.student_id);self.profiles[profile.student_id]=profile;return profile
+    def update_profile(self,profile:LearningProfile)->LearningProfile:
+        self._student(profile.student_id);self.profiles[profile.student_id]=profile;return profile
     create_or_update_learning_profile=update_profile
     def create_course(self,course:Course)->Course:self.courses[course.id]=course;return course
     def get_course(self,course_id:str)->Course:return self._course(course_id)
