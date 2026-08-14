@@ -6,6 +6,8 @@ from dataclasses import dataclass
 import logging
 import time
 
+from backend.education.telegram import TelegramEducationAdapter
+
 from .auth import FounderAuthenticator, Role
 from .config import TelegramConfig
 from .conversation import AIRAConversationService
@@ -14,7 +16,7 @@ LOGGER = logging.getLogger(__name__)
 TECHNICAL_ERROR = "У меня возникла техническая ошибка.\nПопробуй отправить сообщение ещё раз."
 DENIED = "Сейчас это приватная тестовая версия AIRA. Доступ к диалогу ограничен."
 START = "Привет 💜\nЯ AIRA.\n\nЯ уже на связи.\n\nМожем просто поговорить или начать\nработать над нашим проектом."
-HELP = "Я умею вести диалог и помнить недавний контекст этой беседы. Команды: /privacy, /delete_my_data, /health."
+HELP = "Я умею вести диалог и проводить языковые занятия. Команды: /learn, /privacy, /delete_my_data, /health."
 
 
 @dataclass(frozen=True)
@@ -31,9 +33,15 @@ def safe_chat_id(chat_id: int) -> str:
 
 
 class TelegramGateway:
-    def __init__(self, config: TelegramConfig, conversation: AIRAConversationService):
+    def __init__(
+        self,
+        config: TelegramConfig,
+        conversation: AIRAConversationService,
+        education: TelegramEducationAdapter | None = None,
+    ):
         self.config = config
         self.conversation = conversation
+        self.education = education
         self.auth = FounderAuthenticator(config.founder_telegram_id)
 
     async def handle(self, incoming: IncomingMessage) -> str:
@@ -51,6 +59,10 @@ class TelegramGateway:
                 return START
             if command == "/help":
                 return HELP
+            if command == "/learn":
+                if not self.education:
+                    return "AIRA Academy is not configured."
+                return self.education.handle_learn(str(incoming.user_id))
             if command == "/privacy":
                 if self.config.privacy_policy_url:
                     return f"Политика конфиденциальности: {self.config.privacy_policy_url}"
@@ -58,6 +70,8 @@ class TelegramGateway:
                         "в памяти процесса для контекста и передаются AI-провайдеру для ответа.")
             if command == "/delete_my_data":
                 self.conversation.delete_user_data(incoming.user_id)
+                if self.education:
+                    self.education.api.repository.delete_for_platform_user(str(incoming.user_id))
                 return ("Локальная история ваших бесед удалена. Это подтверждение относится "
                         "только к данным, хранившимся в AIRA OS, а не у внешних провайдеров.")
             if command == "/health":
@@ -72,8 +86,6 @@ class TelegramGateway:
             )
         except Exception as exc:  # transport boundary: sanitize every provider failure
             status, category = "error", type(exc).__name__
-            # Do not attach exception text/traceback: upstream exceptions can echo
-            # request metadata or credentials. The category is enough for metrics.
             LOGGER.error(
                 "telegram processing failed update_id=%s chat=%s category=%s",
                 incoming.update_id, safe_chat_id(incoming.chat_id), category,
