@@ -7,12 +7,8 @@ from enum import Enum
 from uuid import uuid4
 
 
-def new_id() -> str:
-    return str(uuid4())
-
-
-def now() -> datetime:
-    return datetime.now(timezone.utc)
+def new_id() -> str: return str(uuid4())
+def now() -> datetime: return datetime.now(timezone.utc)
 
 
 class LearningStatus(str, Enum):
@@ -25,6 +21,19 @@ class LearningStatus(str, Enum):
 class Student:
     id: str = field(default_factory=new_id)
     created_at: datetime = field(default_factory=now)
+
+
+@dataclass(slots=True)
+class LearningGoal:
+    id: str
+    description: str
+    target: str | None = None
+
+
+@dataclass(slots=True)
+class StudentPreference:
+    key: str
+    value: str
 
 
 @dataclass(slots=True)
@@ -48,6 +57,14 @@ class Exercise:
     title: str
     kind: str
     topic: str | None = None
+
+
+@dataclass(slots=True)
+class Assessment:
+    id: str
+    title: str
+    exercise_ids: list[str] = field(default_factory=list)
+    passing_score: float = .7
 
 
 @dataclass(slots=True)
@@ -79,9 +96,14 @@ class Course:
     language: str | None = None
     description: str = ""
     modules: list[CourseModule] = field(default_factory=list)
+    def ordered_lessons(self) -> list[Lesson]: return [lesson for module in self.modules for lesson in module.lessons]
 
-    def ordered_lessons(self) -> list[Lesson]:
-        return [lesson for module in self.modules for lesson in module.lessons]
+
+@dataclass(slots=True)
+class LearningPath:
+    student_id: str
+    course_id: str
+    lesson_ids: list[str]
 
 
 @dataclass(slots=True)
@@ -93,6 +115,14 @@ class Enrollment:
     completed_lesson_ids: set[str] = field(default_factory=set)
     started_lesson_ids: set[str] = field(default_factory=set)
     created_at: datetime = field(default_factory=now)
+
+
+@dataclass(slots=True)
+class LessonProgress:
+    student_id: str
+    course_id: str
+    lesson_id: str
+    status: LearningStatus
 
 
 @dataclass(slots=True)
