@@ -4,13 +4,14 @@ from datetime import date, timedelta
 from .models import Course, CourseProgress, Enrollment, ExerciseResult, LearningPath, LearningProfile, LearningStatus, Student, new_id
 from .ports import FakeTutor, InMemoryLearningMemory, LearningMemoryPort, TutorPort
 from .personalization import PersonalizationEngine
+from .placement import PlacementAnswer, PlacementAssessment, PlacementResult, reference_cefr_placement
 class LearningError(ValueError): pass
 class NotFound(LearningError): pass
 class DuplicateEnrollment(LearningError): pass
 class PrerequisiteNotMet(LearningError): pass
 class LearningPlatformService:
     def __init__(self,*,tutor:TutorPort|None=None,memory:LearningMemoryPort|None=None)->None:
-        self.students:dict[str,Student]={};self.profiles:dict[str,LearningProfile]={};self.courses:dict[str,Course]={};self.enrollments:dict[tuple[str,str],Enrollment]={};self.results:list[ExerciseResult]=[];self.tutor=tutor or FakeTutor();self.memory=memory or InMemoryLearningMemory();self.personalization=PersonalizationEngine(self.memory)
+        self.students:dict[str,Student]={};self.profiles:dict[str,LearningProfile]={};self.courses:dict[str,Course]={};self.enrollments:dict[tuple[str,str],Enrollment]={};self.results:list[ExerciseResult]=[];self.placement_results:dict[tuple[str,str],PlacementResult]={};self.tutor=tutor or FakeTutor();self.memory=memory or InMemoryLearningMemory();self.personalization=PersonalizationEngine(self.memory)
     def create_student(self)->Student:
         student=Student();self.students[student.id]=student;return student
     def get_student(self,student_id:str)->Student:return self._student(student_id)
@@ -46,6 +47,19 @@ class LearningPlatformService:
         self._student(student_id);self.personalization.record_conversation_issue(student_id,topic)
     def learning_insight(self,student_id:str):
         self._student(student_id);return self.personalization.insight(student_id,self.profiles.get(student_id))
+    def run_placement(self,student_id:str,target_language:str,answers:list[PlacementAnswer],assessment:PlacementAssessment|None=None)->PlacementResult:
+        self._student(student_id);assessment=assessment or reference_cefr_placement();result=assessment.evaluate(student_id,target_language,answers);self.placement_results[(student_id,target_language.casefold())]=result
+        profile=self.profiles.get(student_id) or LearningProfile(student_id);profile.current_level=result.level
+        if target_language not in profile.target_languages:profile.target_languages.append(target_language)
+        self.profiles[student_id]=profile;self.memory.remember(student_id,"placement_levels",f"{target_language}:{result.level}");return result
+    def get_placement_result(self,student_id:str,target_language:str)->PlacementResult:
+        self._student(student_id)
+        try:return self.placement_results[(student_id,target_language.casefold())]
+        except KeyError:raise NotFound("placement result") from None
+    def recommended_course_for_placement(self,student_id:str,target_language:str):
+        result=self.get_placement_result(student_id,target_language);language=target_language.casefold()
+        matches=[course for course in self.courses.values() if (course.language or "").casefold()==language and course.level==result.recommended_course_level]
+        return matches[0] if matches else None
     def progress(self,student_id:str,course_id:str)->CourseProgress:
         enrollment,course=self._context(student_id,course_id);lessons=course.ordered_lessons();scores:dict[str,list[float]]={}
         for result in self.results:
