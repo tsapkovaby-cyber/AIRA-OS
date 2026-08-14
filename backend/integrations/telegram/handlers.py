@@ -21,6 +21,7 @@ def make_message_handler(gateway: TelegramGateway):
             user_id=update.effective_user.id,
             chat_id=update.effective_chat.id,
             text=update.effective_message.text or "",
+            message_id=update.effective_message.message_id,
         )
         response = await gateway.handle(incoming)
         try:
@@ -40,4 +41,3 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
             await update.effective_message.reply_text(TECHNICAL_ERROR)
         except Exception:
             LOGGER.error("telegram error notification failed")
-
