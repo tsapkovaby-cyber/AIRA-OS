@@ -2,6 +2,7 @@
 from __future__ import annotations
 from datetime import date, timedelta
 from .models import Course, CourseProgress, Enrollment, ExerciseResult, LearningPath, LearningProfile, LearningStatus, Student, new_id
+from .path import build_learning_path_snapshot
 from .ports import FakeTutor, InMemoryLearningMemory, LearningMemoryPort, TutorPort
 from .personalization import PersonalizationEngine
 from .placement import PlacementAnswer, PlacementAssessment, PlacementResult, reference_cefr_placement
@@ -28,6 +29,8 @@ class LearningPlatformService:
     def get_enrollment(self,student_id:str,course_id:str)->Enrollment:return self._context(student_id,course_id)[0]
     def get_learning_path(self,student_id:str,course_id:str)->LearningPath:
         enrollment,course=self._context(student_id,course_id);ids=[lesson.id for lesson in course.ordered_lessons() if lesson.id not in enrollment.completed_lesson_ids and set(lesson.prerequisite_lesson_ids).issubset(enrollment.completed_lesson_ids)];return LearningPath(student_id,course_id,ids)
+    def learning_path_snapshot(self,student_id:str,course_id:str):
+        enrollment,course=self._context(student_id,course_id);return build_learning_path_snapshot(enrollment,course)
     def start_lesson(self,student_id:str,course_id:str,lesson_id:str)->Enrollment:
         enrollment,course=self._context(student_id,course_id);lesson=self._lesson(course,lesson_id)
         if not set(lesson.prerequisite_lesson_ids).issubset(enrollment.completed_lesson_ids):raise PrerequisiteNotMet(lesson_id)

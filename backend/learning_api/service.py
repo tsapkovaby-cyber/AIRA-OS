@@ -40,6 +40,10 @@ class LearningPlatformAPI:
     def enroll(self,token:str,course_id:str)->dict[str,Any]:
         student_id=self._student_id(token);enrollment=self.learning.enroll(student_id,course_id);return {"id":enrollment.id,"student_id":student_id,"course_id":course_id,"status":enrollment.status.value}
     def course_progress(self,token:str,course_id:str)->dict[str,Any]:return asdict(self.learning.progress(self._student_id(token),course_id))
+    def learning_path(self,token:str,course_id:str)->dict[str,Any]:
+        snapshot=self.learning.learning_path_snapshot(self._student_id(token),course_id);data=asdict(snapshot)
+        for step in data["steps"]:step["status"]=step["status"].value if hasattr(step["status"],"value") else step["status"]
+        return data
     def next_lesson(self,token:str,course_id:str)->dict[str,Any]|None:
         lesson=self.learning.next_lesson(self._student_id(token),course_id);return asdict(lesson) if lesson else None
     def start_lesson(self,token:str,course_id:str,lesson_id:str)->dict[str,Any]:
