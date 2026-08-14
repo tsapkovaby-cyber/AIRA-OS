@@ -1,0 +1,14 @@
+{
+  "name": "AIRA Academy",
+  "short_name": "AIRA Academy",
+  "description": "Multilingual learning with AIRA Tutor",
+  "start_url": "/academy",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f7f5",
+  "theme_color": "#171717",
+  "icons": [
+    {"src":"/icons/aira-academy.svg","sizes":"any","type":"image/svg+xml","purpose":"any"},
+    {"src":"/icons/aira-academy-maskable.svg","sizes":"any","type":"image/svg+xml","purpose":"maskable"}
+  ]
+}
