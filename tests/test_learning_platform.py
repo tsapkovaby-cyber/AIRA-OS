@@ -1,6 +1,6 @@
 import pytest
 from backend.learning.models import ExerciseResult, LearningProfile
-from backend.learning.seeds import conversational_english_a1
+from backend.learning.seeds import conversational_english_a1, conversational_english_catalog
 from backend.learning.service import DuplicateEnrollment, LearningError, LearningPlatformService, NotFound, PrerequisiteNotMet
 
 def setup_platform():
@@ -29,5 +29,5 @@ def test_student_isolation_and_tutor_memory_boundaries():
     with pytest.raises(NotFound): s.progress(other.id,c.id)
     session=s.start_tutor_session(u.id,mode="text",lesson_id=c.ordered_lessons()[0].id); assert session.student_id==u.id; s.memory.remember(u.id,"mistakes","hello/hi"); assert s.memory.recall(other.id,"mistakes")==[]
 
-def test_reference_course_is_subject_generic_platform_data():
-    c=conversational_english_a1(); assert c.subject=="language" and c.language=="English" and len(c.modules)==1 and len(c.ordered_lessons())==2
+def test_reference_course_catalog_is_a1_through_b2():
+    catalog=conversational_english_catalog(); assert [c.level for c in catalog]==["A1","A2","B1","B2"] and all(c.subject=="language" for c in catalog)
