@@ -26,6 +26,7 @@ class LearningProfile:
     student_id:str
     native_language:str|None=None
     target_languages:list[str]=field(default_factory=list)
+    explanation_language:str|None=None
     current_level:str|None=None
     target_level:str|None=None
     learning_goals:list[str]=field(default_factory=list)

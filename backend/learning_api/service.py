@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import asdict
 from typing import Any
 from backend.accounts.service import AccountService, AuthenticationFailed
+from backend.learning.languages import explanation_languages, learning_languages, resolve_explanation_language
 from backend.learning.models import LearningProfile
 from backend.learning.service import LearningPlatformService
 
@@ -21,14 +22,19 @@ class LearningPlatformAPI:
     def _student_id(self,token:str)->str:
         account=self.current_account(token);return self.accounts.get_primary_student(account.id)
     def get_profile(self,token:str)->dict[str,Any]:
-        student_id=self._student_id(token);profile=self.learning.profiles.get(student_id);return asdict(profile) if profile else {"student_id":student_id}
+        student_id=self._student_id(token);profile=self.learning.profiles.get(student_id);data=asdict(profile) if profile else {"student_id":student_id};data["app_language"]=data.get("explanation_language") or data.get("native_language");return data
     def update_profile(self,token:str,**changes:Any)->dict[str,Any]:
         student_id=self._student_id(token);current=self.learning.profiles.get(student_id) or LearningProfile(student_id)
-        allowed={"native_language","target_languages","current_level","target_level","learning_goals","preferred_learning_style","daily_learning_target_minutes","interests"}
+        allowed={"native_language","explanation_language","target_languages","current_level","target_level","learning_goals","preferred_learning_style","daily_learning_target_minutes","interests"}
         for key,value in changes.items():
             if key not in allowed:raise APIError(f"unsupported profile field: {key}")
             setattr(current,key,value)
-        return asdict(self.learning.update_profile(current))
+        current.explanation_language=resolve_explanation_language(current.native_language,current.explanation_language)
+        data=asdict(self.learning.update_profile(current));data["app_language"]=current.explanation_language;return data
+    def list_languages(self,token:str)->dict[str,Any]:
+        self.current_account(token);return {"learning":[asdict(item) for item in learning_languages()],"explanation":[asdict(item) for item in explanation_languages()]}
+    def app_language(self,token:str)->str|None:
+        profile=self.learning.profiles.get(self._student_id(token));return resolve_explanation_language(profile.native_language,profile.explanation_language) if profile else None
     def list_courses(self,token:str)->list[dict[str,Any]]:
         self.current_account(token);return [{"id":c.id,"title":c.title,"subject":c.subject,"level":c.level,"language":c.language,"description":c.description} for c in self.learning.courses.values()]
     def enroll(self,token:str,course_id:str)->dict[str,Any]:
