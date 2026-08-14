@@ -23,5 +23,11 @@ Integration priorities are:
 
 - Sprint 002: provider-agnostic AIRA Core contracts for Identity, Decision, Memory, Knowledge, Research, Content, Guardian, and Growth under `backend/core/`.
 - Sprint 003: concrete reference Memory Engine under `aira_memory/` with JSON persistence, append-only versions, relationship mapping, permission checks, audit events, lifecycle operations, and structured search. It is retained behind the Sprint 002 Memory abstraction for later adapter integration rather than being wired directly into the live Telegram runtime.
+- Sprint 004: provider-independent Knowledge Graph architecture under `docs/architecture/knowledge-graph/`, with canonical JSON schemas and examples for connected, versioned, traceable and explainable knowledge. The graph is treated as a knowledge-domain layer above Memory rather than a replacement persistence system.
+
+## Architecture references
+
+- [Knowledge Graph Engine](docs/architecture/knowledge-graph/README.md)
+- [Sprint S004 Architecture Report](docs/sprints/S004/architecture-report.md)
 
 Secrets and private user data must never be committed to this repository. See `SECURITY.md`.

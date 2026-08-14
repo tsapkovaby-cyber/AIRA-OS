@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aira-os.local/schemas/knowledge_graph/relationship.schema.json",
+  "title": "Knowledge Graph Relationship",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "sourceNodeId",
+    "targetNodeId",
+    "type",
+    "strength",
+    "reason",
+    "evidence",
+    "createdDate",
+    "version",
+    "confidence",
+    "visibility"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "sourceNodeId": { "type": "string", "minLength": 1 },
+    "targetNodeId": { "type": "string", "minLength": 1 },
+    "type": {
+      "type": "string",
+      "enum": [
+        "USES", "CREATED_BY", "BELONGS_TO", "RELATED_TO", "SIMILAR_TO", "ALTERNATIVE_TO",
+        "REPLACES", "GENERATES", "TESTED_IN", "MENTIONED_IN", "DOCUMENTED_IN", "LEADS_TO",
+        "DEPENDS_ON", "IMPROVES", "INSPIRED_BY", "SUPERSEDES", "CONNECTS_TO", "PART_OF",
+        "REQUIRES", "APPROVED_BY", "OWNED_BY"
+      ]
+    },
+    "strength": { "type": "number", "minimum": 0, "maximum": 1 },
+    "reason": { "type": "string", "minLength": 1 },
+    "evidence": { "type": "array", "items": { "$ref": "#/$defs/evidence" } },
+    "createdDate": { "type": "string", "format": "date-time" },
+    "version": { "type": "string", "minLength": 1 },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "visibility": { "type": "string", "enum": ["public", "internal", "private", "restricted", "archived"] }
+  },
+  "$defs": {
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "sourceType", "citation", "summary", "confidence"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "sourceType": { "type": "string", "enum": ["document", "url", "conversation", "experiment", "observation", "repository", "manual"] },
+        "citation": { "type": "string", "minLength": 1 },
+        "summary": { "type": "string", "minLength": 1 },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "observedDate": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}
