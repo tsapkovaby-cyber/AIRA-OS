@@ -7,6 +7,5 @@ def conversational_english_a1()->Course:
     return Course(id="conversational-english-a1",title="Conversational English — A1",subject="language",level="A1",language="English",description="Reference course demonstrating the learning-platform architecture.",modules=[CourseModule("en-a1-introductions","Introductions",[greeting,introduce])])
 
 def conversational_english_catalog()->list[Course]:
-    """Reference level catalog; A2-B2 are placeholders for later content sprints."""
     a1=conversational_english_a1()
     return [a1]+[Course(id=f"conversational-english-{level.lower()}",title=f"Conversational English — {level}",subject="language",level=level,language="English",description="Reference level placeholder; lessons are authored in later content sprints.") for level in ("A2","B1","B2")]
