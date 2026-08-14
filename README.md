@@ -25,6 +25,7 @@ Integration priorities are:
 - Sprint 003: concrete reference Memory Engine under `aira_memory/` with JSON persistence, append-only versions, relationship mapping, permission checks, audit events, lifecycle operations, and structured search. It is retained behind the Sprint 002 Memory abstraction for later adapter integration rather than being wired directly into the live Telegram runtime.
 - Sprint 004: provider-independent Knowledge Graph architecture under `docs/architecture/knowledge-graph/`, with canonical JSON schemas and examples for connected, versioned, traceable and explainable knowledge. The graph is treated as a knowledge-domain layer above Memory rather than a replacement persistence system.
 - Sprint 005: Research Engine under `src/aira_os/research_engine/` that validates, normalizes, scores, deduplicates and records conflicts in research items, and stops at a `KnowledgeCandidate` handoff. Research is not allowed to publish or become authoritative knowledge by itself.
+- Sprint 006: Decision Engine under `src/aira_os/decision_engine/` for evidence-first, explainable decisions with confidence/risk classification and explicit Founder approval. During integration, approval and rejection were hardened so non-Founder actors cannot approve sensitive decisions.
 
 ## Architecture references
 
@@ -32,5 +33,6 @@ Integration priorities are:
 - [Sprint S004 Architecture Report](docs/sprints/S004/architecture-report.md)
 - [Research Engine Architecture](docs/research_engine/ARCHITECTURE.md)
 - [Research Engine Workflow](docs/research_engine/WORKFLOW.md)
+- [Decision Engine Architecture](docs/decision_engine/ARCHITECTURE.md)
 
 Secrets and private user data must never be committed to this repository. See `SECURITY.md`.
