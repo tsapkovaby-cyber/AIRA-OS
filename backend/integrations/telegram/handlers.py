@@ -21,7 +21,7 @@ def make_message_handler(gateway: TelegramGateway):
             user_id=update.effective_user.id,
             chat_id=update.effective_chat.id,
             text=update.effective_message.text or "",
-            message_id=update.effective_message.message_id,
+            message_id=getattr(update.effective_message, "message_id", 0),
         )
         response = await gateway.handle(incoming)
         try:
