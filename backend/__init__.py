@@ -1,1 +1,2 @@
-"""Backend package for AIRA OS."""
+"""AIRA OS backend."""
+
