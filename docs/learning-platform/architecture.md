@@ -7,3 +7,5 @@ Before creating this canonical package, the integrated repository was reviewed f
 The platform reuses AIRA capabilities rather than duplicating them: the `LearningMemoryPort` is the boundary to AIRA Memory; `TutorPort` is the boundary to Intelligence/Voice/Perception. Sprint 025 ships in-memory/fake adapters so tests and core learning flows require no paid API.
 
 Canonical hierarchy: Student → LearningProfile → Enrollment → Course → Module → Lesson → Exercise. Ownership is student-scoped at the application service boundary.
+
+Sprint 025 intentionally changes no Railway entry point and creates no Telegram runtime. Persistent AIRA Memory adapters, HTTP authentication and external AI providers are later adapter sprints.
