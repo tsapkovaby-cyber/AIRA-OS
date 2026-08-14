@@ -34,11 +34,7 @@ class DecisionEngine:
             decision_type=decision_type,
         )
         approval = requires_approval(decision_type, risk)
-        status = (
-            DecisionStatus.WAITING_FOR_APPROVAL
-            if approval is ApprovalStatus.REQUIRED
-            else DecisionStatus.DRAFT
-        )
+        status = DecisionStatus.WAITING_FOR_APPROVAL if approval is ApprovalStatus.REQUIRED else DecisionStatus.DRAFT
         decision = Decision(
             type=decision_type,
             goal=goal,
@@ -76,7 +72,13 @@ class DecisionEngine:
             f"Approval: {decision.required_approval.value}"
         )
 
+    @staticmethod
+    def _require_founder(actor: str) -> None:
+        if actor != "founder":
+            raise PermissionError("Only the Founder may approve or reject a decision")
+
     def approve_decision(self, decision_id: str, actor: str = "founder") -> Decision:
+        self._require_founder(actor)
         decision = self.store.load(decision_id)
         decision.required_approval = ApprovalStatus.APPROVED
         decision.execution_status = DecisionStatus.APPROVED
@@ -84,6 +86,7 @@ class DecisionEngine:
         return self.store.save(decision)
 
     def reject_decision(self, decision_id: str, actor: str = "founder") -> Decision:
+        self._require_founder(actor)
         decision = self.store.load(decision_id)
         decision.required_approval = ApprovalStatus.REJECTED
         decision.execution_status = DecisionStatus.REJECTED
