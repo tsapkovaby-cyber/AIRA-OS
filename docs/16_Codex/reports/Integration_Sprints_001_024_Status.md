@@ -22,17 +22,27 @@ The staging branch contains the historical Sprint 001–024 architecture reconci
 - Digital Human Video/Motion/Lip-Sync: `backend/digital_human/video`.
 - Digital Human root facade remains multimodal and must not be replaced by a modality-specific profile.
 
-## Telegram boundaries
+## Telegram convergence
 
-Three Telegram-related layers currently exist for different historical purposes:
+Three Telegram-related layers remain in the repository for historical reasons:
 
-1. `backend/integrations/telegram` — current production/MVP transport lineage.
-2. `backend/telegram` — secure Founder gateway architecture retained for reconciliation.
-3. `src/aira_os/telegram` — later webhook/gateway/worker architecture retained for reconciliation.
+1. `backend/integrations/telegram` — the current production/MVP python-telegram-bot transport and the only runtime that may be started today.
+2. `backend/telegram` — selected as the canonical future transport-neutral Telegram/Core contract (Founder models, authorization, callback and gateway ports).
+3. `src/aira_os/telegram` — retained as a source of later hardened capabilities such as webhook ingestion, persistence, media handling, approvals, pause/resume, rate limiting and audit; it is not a second deployable bot runtime.
 
-Only the existing production transport is considered deployable today. The other two are staging architectures and must not be started as additional bot processes. Final consolidation must select one future gateway contract and migrate the production adapter behind it before enabling it.
+The canonical direction is now explicit: keep one Telegram process, migrate the current production transport behind the `backend/telegram` Core gateway contract, and reuse useful Sprint 022 capabilities without starting its worker as another update consumer.
 
-### Telegram configuration convergence completed in this audit
+### Core bridge added
+
+`backend/integrations/telegram/core_bridge.py` now converts the live MVP message into canonical `FounderMessage` and `FounderIdentity` objects.
+
+The existing `TelegramGateway` accepts an optional `AiraCoreGateway`. When no Core gateway is supplied, it continues to call the existing `AIRAConversationService` exactly as the current Railway composition does. When a Core gateway is supplied in staging/tests, ordinary Founder chat is routed through the canonical transport-neutral Core port.
+
+The production `build_application()` has not been changed to supply this gateway, so the bridge is an opt-in migration seam and cannot activate a second architecture by itself.
+
+The live handler now also preserves the Telegram `message_id` when available; legacy/mocked messages without that attribute safely fall back to `0`.
+
+### Telegram configuration convergence
 
 Sprint 022 originally required `TELEGRAM_WEBHOOK_SECRET` even when using long polling and used the string `long_polling`, while the live MVP uses `polling`. The staging `src/aira_os/telegram/config.py` now:
 
@@ -41,7 +51,7 @@ Sprint 022 originally required `TELEGRAM_WEBHOOK_SECRET` even when using long po
 - keeps `TELEGRAM_BOT_TOKEN` and `AIRA_FOUNDER_TELEGRAM_ID` mandatory;
 - has regression tests covering polling/webhook behavior.
 
-This removes an environment-contract conflict before any future Telegram convergence work.
+The detailed migration sequence and invariants are recorded in `docs/architecture/telegram-convergence.md`.
 
 ## Security corrections already applied
 
@@ -54,10 +64,11 @@ This removes an environment-contract conflict before any future Telegram converg
 - Voice and Video were integrated as separate modalities rather than replacing Visual or the multimodal root profile.
 - Historical repository-level configuration files were not allowed to overwrite the consolidated baseline during subsystem imports.
 - `.env.example` remains value-free and documents the staging Dashboard variables.
+- Telegram provider/Core failures remain sanitized at the transport boundary.
 
 ## Continuous regression gates
 
-Two staging GitHub Actions workflows are now committed:
+Two staging GitHub Actions workflows are committed:
 
 - `.github/workflows/integration-python.yml`
 - `.github/workflows/integration-dashboard.yml`
@@ -71,9 +82,9 @@ Python 3.11 CI successfully:
 - installed `requirements.txt` and the editable project dev dependencies;
 - compiled `backend`, `src`, `aira_memory`, and `tests`;
 - ran the consolidated test discovery across `tests`, `backend`, and `src`;
-- passed **249 tests** after the Telegram configuration convergence tests were added.
+- passed **253 tests** after the Core bridge regression tests were added.
 
-This confirms the previously separate Python sprint test suites can currently coexist under one Python 3.11 environment with the production OpenAI/httpx/Telegram dependency pins.
+During this phase CI caught one compatibility regression immediately: the transport handler initially assumed every mocked/effective message exposed `message_id`. That failed an existing error-delivery test; the handler was corrected to use a safe fallback and the next full run returned to green with 253 passing tests.
 
 ### Founder Dashboard regression result
 
@@ -83,18 +94,21 @@ Node.js CI successfully:
 - ran the Vitest suite;
 - completed `next build` with CI-only placeholder environment values for the Dashboard credential contract.
 
-The Dashboard therefore compiles as part of the consolidated staging repository without requiring production secrets.
+The Dashboard continues to compile successfully after the Telegram convergence changes.
 
 ## Remaining promotion blockers
 
 The staging branch must not be merged to production until all of the following are resolved:
 
-1. Telegram architecture is consolidated to one future gateway contract and one running bot process.
-2. Environment/config requirements for every subsystem selected for activation are documented and validated.
-3. External provider adapters remain disabled unless credentials, budgets, permissions and Guardian/Founder gates are explicitly configured.
-4. End-to-end checks verify publishing, approvals, deletion/privacy controls and emergency pause behavior across the selected production composition.
-5. A production migration plan defines which staging modules are activated immediately and which remain dormant libraries.
-6. Dashboard dependency reproducibility should be improved with a committed npm lockfile before production deployment.
+1. Implement a concrete canonical Core gateway composition and exercise it end-to-end while keeping the legacy Railway composition as the default until cutover approval.
+2. Migrate signed approval callbacks and their idempotency/audit path behind the same single Telegram transport.
+3. Integrate Perception/media/voice through the selected gateway without introducing a second polling/webhook consumer.
+4. Unify activated Memory/session stores and guarantee `/delete_my_data` clears every AIRA-owned store in the production composition.
+5. Move pause/resume, workflow and research controls behind Core/Guardian/Founder authority boundaries.
+6. Environment/config requirements for every subsystem selected for activation must be documented and validated.
+7. External provider adapters remain disabled unless credentials, budgets, permissions and Guardian/Founder gates are explicitly configured.
+8. A production migration plan must define which staging modules are activated immediately and which remain dormant libraries.
+9. Dashboard dependency reproducibility should be improved with a committed npm lockfile before production deployment.
 
 ## Pull request cleanup
 
@@ -102,4 +116,4 @@ Historical implementation PRs that were manually reconciled have been closed as 
 
 ## Current state
 
-Sprints 001–024 are structurally assembled and the first full cross-sprint regression gate is green. The next active assembly phase is Telegram convergence and production-composition design, followed by end-to-end authority/privacy tests and a promotion-readiness PR. No production activation has occurred.
+Sprints 001–024 are structurally assembled, Python regression is green at 253 tests, Dashboard regression/build is green, and Telegram convergence has moved from architecture selection to an executable opt-in Core bridge. No production activation or second Telegram process has occurred. The next assembly step is approval/callback convergence and a concrete Core composition for staging end-to-end tests.
