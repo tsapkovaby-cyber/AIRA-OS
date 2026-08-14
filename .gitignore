@@ -1,7 +1,26 @@
-__pycache__/
-*.py[cod]
-.pytest_cache/
+# Python
 .venv/
-build/
-dist/
+__pycache__/
+.pytest_cache/
+*.py[cod]
 *.egg-info/
+
+# JavaScript / Node
+node_modules/
+
+# Build and test outputs
+dist/
+build/
+coverage/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# OS / editor artifacts
+.DS_Store
+Thumbs.db
