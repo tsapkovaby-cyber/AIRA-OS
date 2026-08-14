@@ -1,10 +1,11 @@
 {
   "name": "aira-founder-dashboard",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "start": "next start",
     "lint": "next lint",
     "test": "vitest run"
   },
