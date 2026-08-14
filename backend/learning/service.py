@@ -3,13 +3,14 @@ from __future__ import annotations
 from datetime import date, timedelta
 from .models import Course, CourseProgress, Enrollment, ExerciseResult, LearningPath, LearningProfile, LearningStatus, Student, new_id
 from .ports import FakeTutor, InMemoryLearningMemory, LearningMemoryPort, TutorPort
+from .personalization import PersonalizationEngine
 class LearningError(ValueError): pass
 class NotFound(LearningError): pass
 class DuplicateEnrollment(LearningError): pass
 class PrerequisiteNotMet(LearningError): pass
 class LearningPlatformService:
     def __init__(self,*,tutor:TutorPort|None=None,memory:LearningMemoryPort|None=None)->None:
-        self.students:dict[str,Student]={};self.profiles:dict[str,LearningProfile]={};self.courses:dict[str,Course]={};self.enrollments:dict[tuple[str,str],Enrollment]={};self.results:list[ExerciseResult]=[];self.tutor=tutor or FakeTutor();self.memory=memory or InMemoryLearningMemory()
+        self.students:dict[str,Student]={};self.profiles:dict[str,LearningProfile]={};self.courses:dict[str,Course]={};self.enrollments:dict[tuple[str,str],Enrollment]={};self.results:list[ExerciseResult]=[];self.tutor=tutor or FakeTutor();self.memory=memory or InMemoryLearningMemory();self.personalization=PersonalizationEngine(self.memory)
     def create_student(self)->Student:
         student=Student();self.students[student.id]=student;return student
     def get_student(self,student_id:str)->Student:return self._student(student_id)
@@ -40,7 +41,11 @@ class LearningPlatformService:
         _,course=self._context(result.student_id,result.course_id);lesson=self._lesson(course,result.lesson_id)
         if not any(exercise.id==result.exercise_id for exercise in lesson.exercises):raise NotFound(result.exercise_id)
         if not 0<=result.score<=1:raise LearningError("score must be between 0 and 1")
-        self.results.append(result);return result
+        self.results.append(result);self.personalization.record_result(result);return result
+    def record_conversation_issue(self,student_id:str,topic:str)->None:
+        self._student(student_id);self.personalization.record_conversation_issue(student_id,topic)
+    def learning_insight(self,student_id:str):
+        self._student(student_id);return self.personalization.insight(student_id,self.profiles.get(student_id))
     def progress(self,student_id:str,course_id:str)->CourseProgress:
         enrollment,course=self._context(student_id,course_id);lessons=course.ordered_lessons();scores:dict[str,list[float]]={}
         for result in self.results:
