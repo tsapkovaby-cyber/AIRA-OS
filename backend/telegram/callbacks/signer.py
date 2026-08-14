@@ -1,6 +1,7 @@
 """Short, expiring, tamper-evident inline callback references."""
 
 import base64
+import binascii
 import hashlib
 import hmac
 import time
@@ -37,9 +38,12 @@ class CallbackSigner:
     def verify(self, value: str, *, now: int | None = None) -> CallbackAction:
         try:
             body, encoded_signature = value.encode().split(b".", 1)
-            signature = base64.urlsafe_b64decode(encoded_signature + b"=" * (-len(encoded_signature) % 4))
+            if len(encoded_signature) != 11:
+                raise InvalidCallback("invalid callback signature")
+            padded_signature = encoded_signature + b"=" * (-len(encoded_signature) % 4)
+            signature = base64.b64decode(padded_signature, altchars=b"-_", validate=True)
             expected = hmac.new(self._secret, body, hashlib.sha256).digest()[:8]
-            if not hmac.compare_digest(signature, expected):
+            if len(signature) != len(expected) or not hmac.compare_digest(signature, expected):
                 raise InvalidCallback("invalid callback signature")
             raw = base64.urlsafe_b64decode(body + b"=" * (-len(body) % 4))
             action, object_type, object_id, version, sensitive, expires = raw.decode().split("|")
@@ -54,5 +58,5 @@ class CallbackSigner:
             )
         except InvalidCallback:
             raise
-        except (TypeError, UnicodeDecodeError, ValueError) as error:
+        except (binascii.Error, TypeError, UnicodeDecodeError, ValueError) as error:
             raise InvalidCallback("malformed callback") from error
