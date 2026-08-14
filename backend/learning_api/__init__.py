@@ -1,3 +1,3 @@
 """Transport-neutral API facade for the AIRA Learning Platform."""
-from .service import LearningPlatformAPI, APIError
-__all__=["LearningPlatformAPI","APIError"]
+from .service import APIError, LearningPlatformAPI, Unauthorized
+__all__=["LearningPlatformAPI","APIError","Unauthorized"]
