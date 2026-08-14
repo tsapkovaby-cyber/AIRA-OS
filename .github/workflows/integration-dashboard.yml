@@ -1,0 +1,38 @@
+name: Integration Dashboard Regression
+
+on:
+  push:
+    branches:
+      - integration/sprints-001-024
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  dashboard-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: package.json
+
+      - name: Install dashboard dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Run dashboard tests
+        run: npm test
+
+      - name: Build dashboard
+        env:
+          AIRA_DASHBOARD_EMAIL: ci@example.invalid
+          AIRA_DASHBOARD_PASSWORD: ci-only-placeholder
+          AIRA_DASHBOARD_SESSION_TOKEN: ci-session-placeholder-32-characters
+        run: npm run build
