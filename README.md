@@ -1,25 +1,24 @@
 # AIRA-OS
 
-AIRA-OS contains the architecture-first foundation for AIRA Core.
+AIRA OS is the repository for AIRA, a virtual AI assistant and digital-human platform.
 
-## Sprint 002 Scope
+## Current baseline
 
-This repository currently defines eight architecture-only core modules:
+The current production baseline contains the Telegram MVP, privacy-policy hosting, deployment configuration, and the OpenAI SDK compatibility fix used by the Railway deployment.
 
-- Identity Engine
-- Decision Engine
-- Memory Engine
-- Knowledge Engine
-- Research Engine
-- Content Engine
-- Guardian Engine
-- Growth Engine
+## Historical sprint integration
 
-The implementation is intentionally limited to interfaces, configuration models, initialization, and documentation. No AI provider, social network, database, API integration, or business logic is included.
+Early Codex sprints were developed in parallel branches and are being reconciled on `integration/sprints-001-024` before any consolidated merge into `main`.
 
-## Development
+Integration priorities are:
 
-```bash
-python -m pip install -e '.[dev]'
-pytest
-```
+1. preserve the working Telegram/deployment baseline;
+2. consolidate repository and core architecture;
+3. integrate Memory, Knowledge, Research, Decision, Planner, Workflow, Guardian, Content, Publishing, Agents, Intelligence and Retrieval;
+4. select one canonical Digital Human implementation where historical work overlaps;
+5. integrate Perception, Telegram gateway, AIRA Academy and the Live Language Classroom;
+6. run regression tests before promoting the integrated system to `main`.
+
+Sprint 002 contributes the architecture-first AIRA Core contracts for Identity, Decision, Memory, Knowledge, Research, Content, Guardian, and Growth. These contracts are intentionally provider-agnostic and are being integrated without replacing the working Telegram/runtime baseline.
+
+Secrets and private user data must never be committed to this repository. See `SECURITY.md`.
