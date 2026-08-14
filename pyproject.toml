@@ -1,0 +1,18 @@
+[project]
+name = "aira-os"
+version = "0.2.0"
+description = "AIRA Core foundation architecture"
+requires-python = ">=3.11"
+dependencies = [
+  "pydantic>=2.7,<3.0"
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0,<9.0"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
