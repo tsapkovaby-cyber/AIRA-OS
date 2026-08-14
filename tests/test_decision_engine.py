@@ -67,6 +67,26 @@ def test_approval_workflow_for_publishing():
     assert approved.execution_status is DecisionStatus.APPROVED
 
 
+def test_non_founder_cannot_approve_or_reject():
+    engine = DecisionEngine()
+    selected = option("Publish Draft", RiskLevel.LOW, 96)
+    decision = engine.create_decision(
+        decision_type=DecisionType.PUBLISHING,
+        goal="prepare publication candidate",
+        context={},
+        inputs={"evidence": ["editorial checklist"]},
+        alternatives=[selected],
+        selected_option=selected,
+        confidence=96,
+        risk=RiskLevel.LOW,
+        reasoning="Founder review is required.",
+    )
+    with pytest.raises(PermissionError, match="Founder"):
+        engine.approve_decision(decision.id, actor="agent")
+    with pytest.raises(PermissionError, match="Founder"):
+        engine.reject_decision(decision.id, actor="agent")
+
+
 def test_alternative_generation_requirement_validates_selected_option():
     engine = DecisionEngine()
     selected = option("Selected")
