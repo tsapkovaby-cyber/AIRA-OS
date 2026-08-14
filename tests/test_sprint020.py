@@ -1,10 +1,10 @@
 from dataclasses import replace
 import pytest
-from digital_human.models import *
-from digital_human.evaluation import *
-from digital_human.providers import *
-from digital_human.services import *
-from digital_human.benchmark import AIRA_VIDEO_BENCHMARK_V1
+from backend.digital_human.video.models import *
+from backend.digital_human.video.evaluation import *
+from backend.digital_human.video.providers import *
+from backend.digital_human.video.services import *
+from backend.digital_human.video.benchmark import AIRA_VIDEO_BENCHMARK_V1
 
 def fixtures():
     motion=MotionProfile("AIRA", "1")
