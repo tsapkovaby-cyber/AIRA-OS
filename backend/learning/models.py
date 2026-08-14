@@ -25,6 +25,7 @@ class StudentPreference:
 class LearningProfile:
     student_id:str
     native_language:str|None=None
+    explanation_language:str|None=None
     target_languages:list[str]=field(default_factory=list)
     current_level:str|None=None
     target_level:str|None=None
