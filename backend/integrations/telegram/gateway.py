@@ -11,6 +11,7 @@ from backend.education.telegram import TelegramEducationAdapter
 from .auth import FounderAuthenticator, Role
 from .config import TelegramConfig
 from .conversation import AIRAConversationService
+from .core_bridge import AiraCoreGateway, founder_identity, founder_message
 
 LOGGER = logging.getLogger(__name__)
 TECHNICAL_ERROR = "У меня возникла техническая ошибка.\nПопробуй отправить сообщение ещё раз."
@@ -25,6 +26,7 @@ class IncomingMessage:
     user_id: int
     chat_id: int
     text: str
+    message_id: int = 0
 
 
 def safe_chat_id(chat_id: int) -> str:
@@ -38,10 +40,12 @@ class TelegramGateway:
         config: TelegramConfig,
         conversation: AIRAConversationService,
         education: TelegramEducationAdapter | None = None,
+        core_gateway: AiraCoreGateway | None = None,
     ):
         self.config = config
         self.conversation = conversation
         self.education = education
+        self.core_gateway = core_gateway
         self.auth = FounderAuthenticator(config.founder_telegram_id)
 
     async def handle(self, incoming: IncomingMessage) -> str:
@@ -49,9 +53,9 @@ class TelegramGateway:
         status = "ok"
         category = "none"
         try:
-            identity = self.auth.setup_identity_message(incoming.user_id)
-            if identity:
-                return identity
+            identity_message = self.auth.setup_identity_message(incoming.user_id)
+            if identity_message:
+                return identity_message
             if self.auth.role_for(incoming.user_id) is not Role.FOUNDER:
                 return DENIED
             command = incoming.text.strip().split(maxsplit=1)[0].lower()
@@ -81,6 +85,20 @@ class TelegramGateway:
                         f"{'готов' if health['ai_provider_configured'] else 'не настроен'}.")
             if command.startswith("/"):
                 return "Неизвестная команда. Доступные команды перечислены в /help."
+
+            if self.core_gateway is not None:
+                response = await self.core_gateway.handle_message(
+                    founder_message(
+                        update_id=incoming.update_id,
+                        message_id=incoming.message_id,
+                        user_id=incoming.user_id,
+                        chat_id=incoming.chat_id,
+                        text=incoming.text,
+                    ),
+                    founder_identity(incoming.user_id),
+                )
+                return response.text
+
             return await self.conversation.respond(
                 incoming.user_id, incoming.chat_id, incoming.text
             )
