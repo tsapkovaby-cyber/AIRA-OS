@@ -1,6 +1,25 @@
-.env
+# Python
 .venv/
 __pycache__/
 .pytest_cache/
 *.py[cod]
 
+# JavaScript / Node
+node_modules/
+
+# Build and test outputs
+dist/
+build/
+coverage/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# OS / editor artifacts
+.DS_Store
+Thumbs.db

@@ -1,0 +1,35 @@
+{
+  "id": "node_knowledge_graph_engine",
+  "title": "Knowledge Graph Engine",
+  "description": "AIRA architectural subsystem for connected, versioned, traceable, and explainable knowledge.",
+  "category": "Framework",
+  "layer": 4,
+  "tags": ["knowledge-graph", "architecture", "sprint-s004"],
+  "createdDate": "2026-07-15T00:00:00Z",
+  "updatedDate": "2026-07-15T00:00:00Z",
+  "version": "1.0.0",
+  "confidence": 0.9,
+  "visibility": "internal",
+  "owner": "AIRA Founder",
+  "references": [
+    {
+      "id": "ref_s004_brief",
+      "sourceType": "manual",
+      "citation": "Sprint S004 Knowledge Graph Engine brief",
+      "summary": "Defines the architecture-only scope and required graph capabilities.",
+      "confidence": 1.0,
+      "observedDate": "2026-07-15T00:00:00Z"
+    }
+  ],
+  "relatedNodes": ["node_s004_architecture_report"],
+  "scores": {
+    "confidence": 0.9,
+    "importance": 1.0,
+    "freshness": 1.0,
+    "popularity": 0.2,
+    "businessValue": 0.9,
+    "educationalValue": 0.8,
+    "completeness": 0.85
+  },
+  "historicalVersions": []
+}
