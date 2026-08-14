@@ -10,7 +10,7 @@ def new_id(): return str(uuid4())
 class AccountStatus(str, Enum):
     PENDING_VERIFICATION="pending_verification"; ACTIVE="active"; DISABLED="disabled"; DELETION_REQUESTED="deletion_requested"; DELETED="deleted"
 class AccountRole(str, Enum):
-    STUDENT="student"; PARENT="parent"; TEACHER="teacher"; ADMIN="admin"
+    STUDENT="student"; PARENT="parent"; TEACHER="teacher"; ADMIN="admin"; OWNER="owner"
 
 @dataclass(slots=True)
 class UserAccount:
