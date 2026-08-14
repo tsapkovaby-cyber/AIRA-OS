@@ -1,6 +1,6 @@
 """Example: create and inspect the Telegram Post workflow template."""
 
-from aira_workflow_engine import WorkflowEngine, workflow_templates
+from aira_os.workflow_engine import WorkflowEngine, workflow_templates
 
 engine = WorkflowEngine()
 workflow = workflow_templates()["telegram_post"]
