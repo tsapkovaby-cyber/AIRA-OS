@@ -15,9 +15,9 @@ def api_setup():
     return api, token
 
 
-def test_eight_learning_languages_include_russian():
+def test_ten_learning_languages_include_russian_korean_and_mandarin():
     names = {language.name for language in learning_languages()}
-    assert names == {"English", "Russian", "Spanish", "Italian", "Turkish", "Kazakh", "French", "German"}
+    assert names == {"English", "Russian", "Spanish", "Italian", "Turkish", "Kazakh", "French", "German", "Korean", "Mandarin Chinese"}
 
 
 def test_russian_can_be_target_and_explanation_language():
