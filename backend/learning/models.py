@@ -9,7 +9,9 @@ def new_id()->str:return str(uuid4())
 def now()->datetime:return datetime.now(timezone.utc)
 class LearningStatus(str,Enum): NOT_STARTED="not_started"; IN_PROGRESS="in_progress"; COMPLETED="completed"
 @dataclass(slots=True)
-class Student: id:str=field(default_factory=new_id); created_at:datetime=field(default_factory=now)
+class Student:
+    id:str=field(default_factory=new_id)
+    created_at:datetime=field(default_factory=now)
 @dataclass(slots=True)
 class LearningGoal: id:str; description:str; target:str|None=None
 @dataclass(slots=True)
@@ -44,4 +46,9 @@ class ExerciseResult:
 class CourseProgress:
     course_id:str; completed_lessons:int; total_lessons:int; completion_percentage:float; strengths:list[str]; weaknesses:list[str]; streak_days:int=0
 @dataclass(slots=True)
-class TutorSession: id:str; student_id:str; mode:str; lesson_id:str|None=None; created_at:datetime=field(default_factory=now)
+class TutorSession:
+    id:str
+    student_id:str
+    mode:str
+    lesson_id:str|None=None
+    created_at:datetime=field(default_factory=now)
