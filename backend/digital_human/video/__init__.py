@@ -1,7 +1,5 @@
-"""AIRA digital-human domain, independent from rendering providers."""
+"""Provider-neutral motion, video, and lip-sync capabilities for AIRA."""
 
-from .models import *
-from .evaluation import *
-from .providers import *
-from .services import *
+from .benchmark import AIRA_VIDEO_BENCHMARK_V1
 
+__all__ = ["AIRA_VIDEO_BENCHMARK_V1"]
