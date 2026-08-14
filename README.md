@@ -19,4 +19,9 @@ Integration priorities are:
 5. integrate Perception, Telegram gateway, AIRA Academy and the Live Language Classroom;
 6. run regression tests before promoting the integrated system to `main`.
 
+## Integrated foundations
+
+- Sprint 002: provider-agnostic AIRA Core contracts for Identity, Decision, Memory, Knowledge, Research, Content, Guardian, and Growth under `backend/core/`.
+- Sprint 003: concrete reference Memory Engine under `aira_memory/` with JSON persistence, append-only versions, relationship mapping, permission checks, audit events, lifecycle operations, and structured search. It is retained behind the Sprint 002 Memory abstraction for later adapter integration rather than being wired directly into the live Telegram runtime.
+
 Secrets and private user data must never be committed to this repository. See `SECURITY.md`.
