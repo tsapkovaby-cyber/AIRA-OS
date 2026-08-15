@@ -1,49 +1,23 @@
 import Link from "next/link";
 
 const modules = [
-  {title:"Students",status:"No data yet",desc:"Accounts, languages, levels, progress, streaks and access status.",href:"/developer#students"},
-  {title:"Learning analytics",status:"Waiting for cloud progress",desc:"Completion, drop-off, language and course performance.",href:"/developer#analytics"},
-  {title:"Content Studio",status:"Ready for wiring",desc:"Courses, lessons, exercises, quizzes, video and publication workflow.",href:"/developer#content"},
-  {title:"AIRA Tutor & Voice",status:"Partial",desc:"Tutor behavior, lesson context, voice practice and quality controls.",href:"/developer#aira"},
-  {title:"Site & deployments",status:"Connected",desc:"Production health, previews, releases and technical checks.",href:"/developer#site"},
-  {title:"Billing",status:"Not connected",desc:"Plans, subscriptions, payments and revenue when commerce is enabled.",href:"/developer#billing"},
-  {title:"Security & audit",status:"Foundation active",desc:"Owner access, administrative events and future audit history.",href:"/developer#security"},
-  {title:"Academy settings",status:"Ready",desc:"Languages, features, limits and global learning configuration.",href:"/developer#settings"},
-];
-
-const quickActions = [
-  ["Open Academy","/academy"],
-  ["Student experience","/learn"],
-  ["Content catalog","/learn/catalog"],
-  ["Test AIRA Tutor","/learn/tutor"],
-  ["Check progress UI","/learn/progress"],
+  {title:"Ученики",status:"Нет данных",desc:"Аккаунты, языки, уровни, прогресс, streak и статусы доступа.",href:"/developer/students"},
+  {title:"Аналитика обучения",status:"Ожидает cloud progress",desc:"Завершение уроков, drop-off, языки, уровни и эффективность курсов.",href:"/developer/analytics"},
+  {title:"Content Studio",status:"Рабочая основа",desc:"Управление курсами, уроками, упражнениями и публикацией контента.",href:"/developer/content"},
+  {title:"AIRA Tutor & Voice",status:"Частично подключено",desc:"Контроль Tutor, voice practice и качества учебных ответов.",href:"/learn/tutor"},
+  {title:"Сайт и деплои",status:"Подключено",desc:"Production, preview, health и технические проверки сайта.",href:"/developer/site"},
+  {title:"Платежи",status:"Не подключено",desc:"Тарифы, подписки, платежи и выручка после запуска коммерции.",href:"/developer#billing"},
+  {title:"Безопасность и аудит",status:"Основа активна",desc:"Owner access, административные действия и будущий audit log.",href:"/developer#security"},
+  {title:"Настройки Academy",status:"Доступно",desc:"Языки, функции, лимиты и глобальная конфигурация обучения.",href:"/learn/settings"},
 ];
 
 export default function FounderConsole(){
   return <main>
-    <div className="page-head">
-      <div><p className="eyebrow">AIRA OS · FOUNDER CONSOLE</p><h1>Command Center</h1><p className="muted">One workspace for Academy operations, learning quality, content, AI systems and platform health.</p></div>
-      <div><span className="health">● OWNER MODE</span><form action="/api/developer/logout" method="post" style={{marginTop:12}}><button className="button" type="submit">Sign out</button></form></div>
-    </div>
-
-    <section className="brief"><div><span className="eyebrow">LIVE OPERATIONS</span><h2>Founder control stays separate from student subscriptions.</h2><span>Only real connected data is shown. Empty services remain marked as No data yet or Not connected until their backend source is available.</span></div><Link className="button" href="/academy">Open live Academy →</Link></section>
-
-    <div className="grid">
-      <article className="card metric"><span className="eyebrow">STUDENTS</span><div className="value">0</div><span className="muted">Cloud student storage not connected yet</span></article>
-      <article className="card metric"><span className="eyebrow">COMPLETED LESSONS</span><div className="value">0</div><span className="muted">Waiting for server-side progress events</span></article>
-      <article className="card metric"><span className="eyebrow">LANGUAGES</span><div className="value">10</div><span className="trend">Academy catalog active</span></article>
-      <article className="card metric"><span className="eyebrow">PLATFORM</span><div className="value">Online</div><span className="trend">Production Academy available</span></article>
-    </div>
-
-    <div className="section-head"><h2>Quick actions</h2><span className="muted">Founder shortcuts</span></div>
-    <div className="controls">{quickActions.map(([label,href])=><Link key={href} href={href} className="button">{label}</Link>)}</div>
-
-    <div className="section-head"><h2>Operations</h2><span className="muted">AIRA Academy control surface</span></div>
-    <div className="grid">{modules.map(item=><article className="card" key={item.title} id={item.href.split('#')[1]}><span className="pill">{item.status}</span><h2>{item.title}</h2><p className="muted">{item.desc}</p><a href={item.href}>Open workspace →</a></article>)}</div>
-
-    <div className="two-col" style={{marginTop:28}}>
-      <section className="card"><span className="eyebrow">SYSTEM STATUS</span><h2>Academy services</h2><div className="attention"><span className="dot"/><div><strong>Student cloud storage</strong><span className="muted">Not connected — Sprint 049 integration boundary prepared.</span></div></div><div className="attention"><span className="dot"/><div><strong>Learning analytics</strong><span className="muted">Waiting for server-side learner events.</span></div></div><div className="attention"><span className="dot red"/><div><strong>Billing</strong><span className="muted">Not configured. No paid access is active.</span></div></div><div className="attention"><span className="dot"/><div><strong>AIRA Academy production</strong><span className="muted">Available through the live Academy deployment.</span></div></div></section>
-      <section className="card"><span className="eyebrow">FOUNDER ROADMAP</span><h2>Next operational connections</h2><p><strong>1.</strong> Student identity + database</p><p><strong>2.</strong> Real learner event analytics</p><p><strong>3.</strong> Content management actions</p><p><strong>4.</strong> Tutor/Voice quality controls</p><p><strong>5.</strong> Billing and subscription telemetry</p><p><strong>6.</strong> Security/audit event history</p></section>
-    </div>
+    <div className="page-head"><div><p className="eyebrow">AIRA OS · КАБИНЕТ ОСНОВАТЕЛЯ</p><h1>Центр управления</h1><p className="muted">Единое рабочее пространство для Academy, учеников, контента, AI-систем и сайта.</p></div><div><span className="health">● OWNER MODE</span><form action="/api/developer/logout" method="post" style={{marginTop:12}}><button className="button" type="submit">Выйти</button></form></div></div>
+    <section className="brief"><div><span className="eyebrow">LIVE OPERATIONS</span><h2>Управление платформой без выдуманных показателей.</h2><span>Если источник данных ещё не подключён, кабинет показывает «Нет данных» или «Не подключено».</span></div><Link className="button" href="/academy">Открыть Academy →</Link></section>
+    <div className="grid"><article className="card metric"><span className="eyebrow">УЧЕНИКИ</span><div className="value">0</div><span className="muted">Cloud storage ещё не подключено</span></article><article className="card metric"><span className="eyebrow">ЗАВЕРШЁННЫЕ УРОКИ</span><div className="value">0</div><span className="muted">Ожидаются server-side progress events</span></article><article className="card metric"><span className="eyebrow">ЯЗЫКИ</span><div className="value">10</div><span className="trend">Каталог Academy активен</span></article><article className="card metric"><span className="eyebrow">ПЛАТФОРМА</span><div className="value">Online</div><span className="trend">Production доступен</span></article></div>
+    <div className="section-head"><h2>Быстрые действия</h2><span className="muted">Рабочие инструменты основателя</span></div><div className="controls"><Link href="/developer/students" className="button">Ученики</Link><Link href="/developer/analytics" className="button">Аналитика</Link><Link href="/developer/content" className="button">Content Studio</Link><Link href="/developer/site" className="button">Сайт и деплои</Link><Link href="/learn/settings" className="button">Язык приложения</Link><Link href="/learn/tutor" className="button">Тест AIRA Tutor</Link></div>
+    <div className="section-head"><h2>Операционные модули</h2><span className="muted">AIRA Academy control surface</span></div><div className="grid">{modules.map(item=><article className="card" key={item.title}><span className="pill">{item.status}</span><h2>{item.title}</h2><p className="muted">{item.desc}</p><Link href={item.href}>Открыть →</Link></article>)}</div>
+    <div className="two-col" style={{marginTop:28}}><section className="card"><span className="eyebrow">СТАТУС СИСТЕМЫ</span><h2>Academy services</h2><div className="attention"><span className="dot"/><div><strong>Student cloud storage</strong><span className="muted">Не подключено — API boundary подготовлен.</span></div></div><div className="attention"><span className="dot"/><div><strong>Learning analytics</strong><span className="muted">Ожидает серверных learner events.</span></div></div><div className="attention"><span className="dot red"/><div><strong>Billing</strong><span className="muted">Не настроен. Платный доступ пока не активен.</span></div></div><div className="attention"><span className="dot"/><div><strong>AIRA Academy production</strong><span className="muted">Сайт доступен через production deployment.</span></div></div></section><section className="card"><span className="eyebrow">СЛЕДУЮЩИЕ ПОДКЛЮЧЕНИЯ</span><h2>Founder roadmap</h2><p><strong>1.</strong> Student identity + database</p><p><strong>2.</strong> Real learner analytics</p><p><strong>3.</strong> Content management actions</p><p><strong>4.</strong> Tutor/Voice quality controls</p><p><strong>5.</strong> Billing telemetry</p><p><strong>6.</strong> Security/audit history</p></section></div>
   </main>
 }
