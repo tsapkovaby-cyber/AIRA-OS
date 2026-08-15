@@ -12,9 +12,9 @@ export default function AcademyPreview(){
       <nav className="student-nav">
         <Link className="active" href="/academy">⌂ <span>Home</span></Link>
         <Link href="/learn">◇ <span>Learn</span></Link>
-        <a href="#languages">◎ <span>Languages</span></a>
-        <a href="#tutor">✦ <span>AIRA Tutor</span></a>
-        <a href="#progress">↗ <span>Progress</span></a>
+        <Link href="/learn/catalog">◎ <span>Languages</span></Link>
+        <Link href="/learn/tutor">✦ <span>AIRA Tutor</span></Link>
+        <Link href="/learn/progress">↗ <span>Progress</span></Link>
       </nav>
       <div className="student-sidebar-bottom"><p className="student-mini-label">YOUR ACADEMY</p><Link href="/developer">Owner workspace</Link></div>
     </aside>
@@ -29,20 +29,20 @@ export default function AcademyPreview(){
         </section>
 
         <section className="continue-card">
-          <div className="course-badge">EN</div><div className="continue-copy"><p className="student-mini-label">CONTINUE LEARNING</p><h2>English · Beginner path</h2><p>Everyday conversation · Lesson 4 of 12</p><div className="progress-track"><span style={{width:'32%'}} /></div><small>32% complete</small></div><Link href="/learn" className="student-primary">Continue lesson →</Link>
+          <div className="course-badge">EN</div><div className="continue-copy"><p className="student-mini-label">CONTINUE LEARNING</p><h2>English · Beginner path</h2><p>Everyday conversation · Lesson 4 of 12</p><div className="progress-track"><span style={{width:'32%'}} /></div><small>32% complete</small></div><Link href="/learn/courses" className="student-primary">Continue lesson →</Link>
         </section>
 
-        <div className="student-section-head" id="tutor"><div><p className="student-mini-label">LEARN WITH AIRA</p><h2>Your learning tools</h2></div></div>
+        <div className="student-section-head"><div><p className="student-mini-label">LEARN WITH AIRA</p><h2>Your learning tools</h2></div></div>
         <section className="learning-tools">
-          <article className="learning-tool featured"><span className="tool-icon">✦</span><h3>AIRA Tutor</h3><p>Ask questions and get explanations in your own language.</p><Link href="/learn">Start a conversation →</Link></article>
-          <article className="learning-tool"><span className="tool-icon">◉</span><h3>Voice Tutor</h3><p>Practice real conversations, pronunciation and listening.</p><span className="coming-label">Voice practice</span></article>
-          <article className="learning-tool"><span className="tool-icon">▶</span><h3>Video lessons</h3><p>Short guided lessons with AIRA, built around your current level.</p><span className="coming-label">Learning library</span></article>
+          <article className="learning-tool featured"><span className="tool-icon">✦</span><h3>AIRA Tutor</h3><p>Ask questions and get explanations in your own language.</p><Link href="/learn/tutor">Start a conversation →</Link></article>
+          <article className="learning-tool"><span className="tool-icon">◉</span><h3>Voice Tutor</h3><p>Practice real conversations, pronunciation and listening.</p><Link href="/learn/tutor">Open practice modes →</Link></article>
+          <article className="learning-tool"><span className="tool-icon">▶</span><h3>Video lessons</h3><p>Short guided lessons with AIRA, built around your current level.</p><Link href="/learn/courses">Open learning path →</Link></article>
         </section>
 
-        <div className="student-section-head" id="languages"><div><p className="student-mini-label">LANGUAGE CATALOG</p><h2>Choose what you want to learn</h2></div><span>10 languages</span></div>
-        <section className="student-language-grid">{languages.map(([name,code])=><article className="student-language" key={code}><span>{code}</span><div><strong>{name}</strong><small>Personal learning path</small></div><b>→</b></article>)}</section>
+        <div className="student-section-head"><div><p className="student-mini-label">LANGUAGE CATALOG</p><h2>Choose what you want to learn</h2></div><Link href="/learn/catalog">View all paths →</Link></div>
+        <section className="student-language-grid">{languages.map(([name,code])=><Link className="student-language" href="/learn/catalog" key={code}><span>{code}</span><div><strong>{name}</strong><small>Personal learning path</small></div><b>→</b></Link>)}</section>
 
-        <section className="student-progress-card" id="progress"><div><p className="student-mini-label">YOUR PROGRESS</p><h2>Small steps become fluency.</h2><p>Lessons, tutor practice, voice sessions and video activity will come together in one learning history.</p></div><div className="progress-stats"><div><strong>4</strong><span>lessons</span></div><div><strong>32%</strong><span>current path</span></div><div><strong>7</strong><span>day streak</span></div></div></section>
+        <section className="student-progress-card"><div><p className="student-mini-label">YOUR PROGRESS</p><h2>Small steps become fluency.</h2><p>Lessons, tutor practice, voice sessions and video activity will come together in one learning history.</p><Link href="/learn/progress">View detailed progress →</Link></div><div className="progress-stats"><div><strong>4</strong><span>lessons</span></div><div><strong>32%</strong><span>current path</span></div><div><strong>7</strong><span>day streak</span></div></div></section>
       </div>
     </section>
   </main>
