@@ -10,39 +10,24 @@ export default function AcademyPreview(){
     <aside className="student-sidebar">
       <Link href="/academy" className="student-brand">AIRA<span>Academy</span></Link>
       <nav className="student-nav">
-        <Link className="active" href="/academy">⌂ <span>Home</span></Link>
-        <Link href="/learn">◇ <span>Learn</span></Link>
-        <Link href="/learn/catalog">◎ <span>Languages</span></Link>
+        <Link className="active" href="/academy">⌂ <span>Главная</span></Link>
+        <Link href="/learn">◇ <span>Обучение</span></Link>
+        <Link href="/learn/catalog">◎ <span>Языки</span></Link>
         <Link href="/learn/tutor">✦ <span>AIRA Tutor</span></Link>
-        <Link href="/learn/progress">↗ <span>Progress</span></Link>
+        <Link href="/learn/progress">↗ <span>Прогресс</span></Link>
       </nav>
-      <div className="student-sidebar-bottom"><p className="student-mini-label">YOUR ACADEMY</p><Link href="/developer">Owner workspace</Link></div>
+      <div className="student-sidebar-bottom"><p className="student-mini-label">AIRA ACADEMY</p><Link href="/developer">Кабинет основателя</Link></div>
     </aside>
-
     <section className="student-content">
-      <header className="student-topbar"><div><p className="student-mini-label">AIRA ACADEMY</p><strong>Language learning, made personal.</strong></div><div className="student-profile"><span>7 day streak</span><b>A</b></div></header>
-
+      <header className="student-topbar"><div><p className="student-mini-label">AIRA ACADEMY</p><strong>Персональное изучение языков.</strong></div><div className="student-profile"><span>Серия: 7 дней</span><b>A</b></div></header>
       <div className="student-page">
-        <section className="student-welcome">
-          <div><p className="student-mini-label">WELCOME BACK</p><h1>Ready for your next lesson?</h1><p>AIRA adapts lessons, explanations and practice to the language you already understand.</p></div>
-          <div className="student-streak"><span>🔥</span><strong>7</strong><small>day streak</small></div>
-        </section>
-
-        <section className="continue-card">
-          <div className="course-badge" style={{fontSize:'26px'}}>🇺🇸</div><div className="continue-copy"><p className="student-mini-label">CONTINUE LEARNING</p><h2>English · Beginner path</h2><p>Everyday conversation · Lesson 4 of 12</p><div className="progress-track"><span style={{width:'32%'}} /></div><small>32% complete</small></div><Link href="/learn/courses" className="student-primary">Continue lesson →</Link>
-        </section>
-
-        <div className="student-section-head"><div><p className="student-mini-label">LEARN WITH AIRA</p><h2>Your learning tools</h2></div></div>
-        <section className="learning-tools">
-          <article className="learning-tool featured"><span className="tool-icon">✦</span><h3>AIRA Tutor</h3><p>Ask questions and get explanations in your own language.</p><Link href="/learn/tutor">Start a conversation →</Link></article>
-          <article className="learning-tool"><span className="tool-icon">◉</span><h3>Voice Tutor</h3><p>Practice real conversations, pronunciation and listening.</p><Link href="/learn/tutor">Open practice modes →</Link></article>
-          <article className="learning-tool"><span className="tool-icon">▶</span><h3>Video lessons</h3><p>Short guided lessons with AIRA, built around your current level.</p><Link href="/learn/courses">Open learning path →</Link></article>
-        </section>
-
-        <div className="student-section-head"><div><p className="student-mini-label">LANGUAGE CATALOG</p><h2>Choose what you want to learn</h2></div><Link href="/learn/catalog">View all paths →</Link></div>
-        <section className="student-language-grid">{languages.map(([name,code,flag])=><Link className="student-language" href="/learn/catalog" key={code}><span aria-label={`${name} flag`} style={{fontSize:'24px',background:'transparent'}}>{flag}</span><div><strong>{name}</strong><small>Personal learning path</small></div><b>→</b></Link>)}</section>
-
-        <section className="student-progress-card"><div><p className="student-mini-label">YOUR PROGRESS</p><h2>Small steps become fluency.</h2><p>Lessons, tutor practice, voice sessions and video activity will come together in one learning history.</p><Link href="/learn/progress">View detailed progress →</Link></div><div className="progress-stats"><div><strong>4</strong><span>lessons</span></div><div><strong>32%</strong><span>current path</span></div><div><strong>7</strong><span>day streak</span></div></div></section>
+        <section className="student-welcome"><div><p className="student-mini-label">С ВОЗВРАЩЕНИЕМ</p><h1>Готова к следующему уроку?</h1><p>AIRA адаптирует уроки, объяснения и практику под язык, который тебе уже понятен.</p></div><div className="student-streak"><span>🔥</span><strong>7</strong><small>дней подряд</small></div></section>
+        <section className="continue-card"><div className="course-badge" style={{fontSize:'26px'}}>🇺🇸</div><div className="continue-copy"><p className="student-mini-label">ПРОДОЛЖИТЬ ОБУЧЕНИЕ</p><h2>English · Начальный уровень</h2><p>Повседневный разговор · Урок 4 из 12</p><div className="progress-track"><span style={{width:'32%'}} /></div><small>Пройдено 32%</small></div><Link href="/learn/courses" className="student-primary">Продолжить урок →</Link></section>
+        <div className="student-section-head"><div><p className="student-mini-label">ОБУЧАЙСЯ С AIRA</p><h2>Инструменты обучения</h2></div></div>
+        <section className="learning-tools"><article className="learning-tool featured"><span className="tool-icon">✦</span><h3>AIRA Tutor</h3><p>Задавай вопросы и получай объяснения на понятном тебе языке.</p><Link href="/learn/tutor">Начать диалог →</Link></article><article className="learning-tool"><span className="tool-icon">◉</span><h3>Voice Tutor</h3><p>Практикуй разговор, произношение и понимание речи.</p><Link href="/learn/tutor">Открыть практику →</Link></article><article className="learning-tool"><span className="tool-icon">▶</span><h3>Видеоуроки</h3><p>Короткие уроки с AIRA, адаптированные под твой текущий уровень.</p><Link href="/learn/courses">Открыть учебный путь →</Link></article></section>
+        <div className="student-section-head"><div><p className="student-mini-label">КАТАЛОГ ЯЗЫКОВ</p><h2>Выбери язык для обучения</h2></div><Link href="/learn/catalog">Все языки →</Link></div>
+        <section className="student-language-grid">{languages.map(([name,code,flag])=><Link className="student-language" href="/learn/catalog" key={code}><span aria-label={`${name} flag`} style={{fontSize:'24px',background:'transparent'}}>{flag}</span><div><strong>{name}</strong><small>Персональный учебный путь</small></div><b>→</b></Link>)}</section>
+        <section className="student-progress-card"><div><p className="student-mini-label">ТВОЙ ПРОГРЕСС</p><h2>Небольшие шаги приводят к свободной речи.</h2><p>Уроки, Tutor, Voice и видео будут объединяться в единую историю обучения.</p><Link href="/learn/progress">Подробный прогресс →</Link></div><div className="progress-stats"><div><strong>4</strong><span>урока</span></div><div><strong>32%</strong><span>текущий курс</span></div><div><strong>7</strong><span>дней подряд</span></div></div></section>
       </div>
     </section>
   </main>
