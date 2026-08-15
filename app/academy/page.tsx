@@ -1,8 +1,8 @@
 import Link from 'next/link';
 
 const languages = [
-  ['English','EN'],['Русский','RU'],['Español','ES'],['Italiano','IT'],['Türkçe','TR'],
-  ['Қазақша','KK'],['Français','FR'],['Deutsch','DE'],['한국어','KO'],['简体中文','ZH']
+  ['English','EN','🇺🇸'],['Русский','RU','🇷🇺'],['Español','ES','🇪🇸'],['Italiano','IT','🇮🇹'],['Türkçe','TR','🇹🇷'],
+  ['Қазақша','KK','🇰🇿'],['Français','FR','🇫🇷'],['Deutsch','DE','🇩🇪'],['한국어','KO','🇰🇷'],['简体中文','ZH','🇨🇳']
 ];
 
 export default function AcademyPreview(){
@@ -29,7 +29,7 @@ export default function AcademyPreview(){
         </section>
 
         <section className="continue-card">
-          <div className="course-badge">EN</div><div className="continue-copy"><p className="student-mini-label">CONTINUE LEARNING</p><h2>English · Beginner path</h2><p>Everyday conversation · Lesson 4 of 12</p><div className="progress-track"><span style={{width:'32%'}} /></div><small>32% complete</small></div><Link href="/learn/courses" className="student-primary">Continue lesson →</Link>
+          <div className="course-badge" style={{fontSize:'26px'}}>🇺🇸</div><div className="continue-copy"><p className="student-mini-label">CONTINUE LEARNING</p><h2>English · Beginner path</h2><p>Everyday conversation · Lesson 4 of 12</p><div className="progress-track"><span style={{width:'32%'}} /></div><small>32% complete</small></div><Link href="/learn/courses" className="student-primary">Continue lesson →</Link>
         </section>
 
         <div className="student-section-head"><div><p className="student-mini-label">LEARN WITH AIRA</p><h2>Your learning tools</h2></div></div>
@@ -40,7 +40,7 @@ export default function AcademyPreview(){
         </section>
 
         <div className="student-section-head"><div><p className="student-mini-label">LANGUAGE CATALOG</p><h2>Choose what you want to learn</h2></div><Link href="/learn/catalog">View all paths →</Link></div>
-        <section className="student-language-grid">{languages.map(([name,code])=><Link className="student-language" href="/learn/catalog" key={code}><span>{code}</span><div><strong>{name}</strong><small>Personal learning path</small></div><b>→</b></Link>)}</section>
+        <section className="student-language-grid">{languages.map(([name,code,flag])=><Link className="student-language" href="/learn/catalog" key={code}><span aria-label={`${name} flag`} style={{fontSize:'24px',background:'transparent'}}>{flag}</span><div><strong>{name}</strong><small>Personal learning path</small></div><b>→</b></Link>)}</section>
 
         <section className="student-progress-card"><div><p className="student-mini-label">YOUR PROGRESS</p><h2>Small steps become fluency.</h2><p>Lessons, tutor practice, voice sessions and video activity will come together in one learning history.</p><Link href="/learn/progress">View detailed progress →</Link></div><div className="progress-stats"><div><strong>4</strong><span>lessons</span></div><div><strong>32%</strong><span>current path</span></div><div><strong>7</strong><span>day streak</span></div></div></section>
       </div>
