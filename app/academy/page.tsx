@@ -1,6 +1,49 @@
 import Link from 'next/link';
 
-const languages=['English','Русский','Español','Italiano','Türkçe','Қазақша','Français','Deutsch','한국어','简体中文'];
-const features=['Learning paths','AIRA Text Tutor','Founder Voice Tutor','AIRA video lessons','Progress & resume','10 learning languages'];
+const languages = [
+  ['English','EN'],['Русский','RU'],['Español','ES'],['Italiano','IT'],['Türkçe','TR'],
+  ['Қазақша','KK'],['Français','FR'],['Deutsch','DE'],['한국어','KO'],['简体中文','ZH']
+];
 
-export default function AcademyPreview(){return <main className="academy-preview"><section className="academy-hero"><p className="eyebrow">AIRA Academy · Developer Preview</p><h1>Learn languages with AIRA.</h1><p className="muted">One learning account across web and the installable Academy app, with lessons, voice practice, video and progress.</p><div className="academy-actions"><Link className="primary-action" href="/learn">Continue learning</Link><Link className="secondary-action" href="/developer">Owner / Developer</Link></div></section><section className="card"><div className="section-head"><h2>Languages</h2><span className="pill">10 available</span></div><div className="language-grid">{languages.map(language=><span className="language-chip" key={language}>{language}</span>)}</div></section><section className="academy-grid">{features.map(feature=><article className="card" key={feature}><span className="eyebrow">AIRA Academy</span><h3>{feature}</h3><p className="muted">Integrated with the shared Academy account and learning domain.</p></article>)}</section><section className="card"><h2>Installable Academy</h2><p className="muted">This web application now includes a manifest, service worker and offline fallback so supported browsers can install AIRA Academy on a phone, tablet or desktop. Public production deployment and app-store packaging remain separate later stages.</p></section></main>}
+export default function AcademyPreview(){
+  return <main className="student-app">
+    <aside className="student-sidebar">
+      <Link href="/academy" className="student-brand">AIRA<span>Academy</span></Link>
+      <nav className="student-nav">
+        <Link className="active" href="/academy">⌂ <span>Home</span></Link>
+        <Link href="/learn">◇ <span>Learn</span></Link>
+        <a href="#languages">◎ <span>Languages</span></a>
+        <a href="#tutor">✦ <span>AIRA Tutor</span></a>
+        <a href="#progress">↗ <span>Progress</span></a>
+      </nav>
+      <div className="student-sidebar-bottom"><p className="student-mini-label">YOUR ACADEMY</p><Link href="/developer">Owner workspace</Link></div>
+    </aside>
+
+    <section className="student-content">
+      <header className="student-topbar"><div><p className="student-mini-label">AIRA ACADEMY</p><strong>Language learning, made personal.</strong></div><div className="student-profile"><span>7 day streak</span><b>A</b></div></header>
+
+      <div className="student-page">
+        <section className="student-welcome">
+          <div><p className="student-mini-label">WELCOME BACK</p><h1>Ready for your next lesson?</h1><p>AIRA adapts lessons, explanations and practice to the language you already understand.</p></div>
+          <div className="student-streak"><span>🔥</span><strong>7</strong><small>day streak</small></div>
+        </section>
+
+        <section className="continue-card">
+          <div className="course-badge">EN</div><div className="continue-copy"><p className="student-mini-label">CONTINUE LEARNING</p><h2>English · Beginner path</h2><p>Everyday conversation · Lesson 4 of 12</p><div className="progress-track"><span style={{width:'32%'}} /></div><small>32% complete</small></div><Link href="/learn" className="student-primary">Continue lesson →</Link>
+        </section>
+
+        <div className="student-section-head" id="tutor"><div><p className="student-mini-label">LEARN WITH AIRA</p><h2>Your learning tools</h2></div></div>
+        <section className="learning-tools">
+          <article className="learning-tool featured"><span className="tool-icon">✦</span><h3>AIRA Tutor</h3><p>Ask questions and get explanations in your own language.</p><Link href="/learn">Start a conversation →</Link></article>
+          <article className="learning-tool"><span className="tool-icon">◉</span><h3>Voice Tutor</h3><p>Practice real conversations, pronunciation and listening.</p><span className="coming-label">Voice practice</span></article>
+          <article className="learning-tool"><span className="tool-icon">▶</span><h3>Video lessons</h3><p>Short guided lessons with AIRA, built around your current level.</p><span className="coming-label">Learning library</span></article>
+        </section>
+
+        <div className="student-section-head" id="languages"><div><p className="student-mini-label">LANGUAGE CATALOG</p><h2>Choose what you want to learn</h2></div><span>10 languages</span></div>
+        <section className="student-language-grid">{languages.map(([name,code])=><article className="student-language" key={code}><span>{code}</span><div><strong>{name}</strong><small>Personal learning path</small></div><b>→</b></article>)}</section>
+
+        <section className="student-progress-card" id="progress"><div><p className="student-mini-label">YOUR PROGRESS</p><h2>Small steps become fluency.</h2><p>Lessons, tutor practice, voice sessions and video activity will come together in one learning history.</p></div><div className="progress-stats"><div><strong>4</strong><span>lessons</span></div><div><strong>32%</strong><span>current path</span></div><div><strong>7</strong><span>day streak</span></div></div></section>
+      </div>
+    </section>
+  </main>
+}
