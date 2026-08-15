@@ -1,10 +1,8 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { useSearchParams } from "next/navigation";
 
 export default function DeveloperLogin() {
-  const searchParams = useSearchParams();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -20,8 +18,8 @@ export default function DeveloperLogin() {
     });
     setLoading(false);
     if (response.ok) {
-      const next = searchParams.get("next");
-      location.href = next?.startsWith("/developer") ? next : "/developer";
+      const next = new URLSearchParams(window.location.search).get("next");
+      window.location.href = next?.startsWith("/developer") ? next : "/developer";
       return;
     }
     setError(response.status === 503 ? "Owner access is not configured." : "Email or password is incorrect.");
