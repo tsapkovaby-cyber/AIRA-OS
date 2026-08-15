@@ -1,3 +1,20 @@
+import Link from "next/link";
 import styles from "../learn.module.css";
-const courses=[['Conversational English','A1','Start speaking in everyday situations.','Enrolled'],['Conversational English','A2','Extend everyday conversations and confidence.','Available'],['Conversational English','B1','Speak with more independence and detail.','Available'],['Conversational English','B2','Develop fluent, flexible conversation.','Available']];
-export default function Catalog(){return <><div className={styles.pageHeading}><span className={styles.eyebrow}>COURSE CATALOG</span><h1>Choose what to learn next</h1><p>The platform is built to support languages, school subjects and exam preparation.</p></div><div className={styles.courseGrid}>{courses.map(([title,level,desc,state])=><article className={styles.courseCard} key={level}><span className={styles.pill}>English · {level}</span><h2>{title}</h2><p>{desc}</p><button className={state==='Enrolled'?styles.secondaryButton:styles.primaryButton}>{state==='Enrolled'?'Continue':'Enroll'}</button></article>)}</div></>}
+
+const languages = [
+  ["English","EN","Conversational English","A1–B2","Active"],
+  ["Русский","RU","Conversational Russian","A1–B2","Available"],
+  ["Español","ES","Conversational Spanish","A1–B2","Available"],
+  ["Italiano","IT","Conversational Italian","A1–B2","Available"],
+  ["Türkçe","TR","Conversational Turkish","A1–B2","Available"],
+  ["Қазақша","KK","Conversational Kazakh","A1–B2","Available"],
+  ["Français","FR","Conversational French","A1–B2","Available"],
+  ["Deutsch","DE","Conversational German","A1–B2","Available"],
+  ["한국어","KO","Conversational Korean","A1–B2","Available"],
+  ["简体中文","ZH","Conversational Chinese","A1–B2","Available"],
+] as const;
+
+export default function Catalog(){return <>
+  <div className={styles.pageHeading}><span className={styles.eyebrow}>LANGUAGE CATALOG</span><h1>Choose your learning language</h1><p>Learn in the explanation language you already understand. Every language follows the same personal path structure and can later adapt to your goals.</p></div>
+  <div className={styles.courseGrid}>{languages.map(([name,code,title,levels,state])=><article className={styles.courseCard} key={code}><span className={styles.pill}>{code} · {levels}</span><h2>{name}</h2><p>{title}. Start from the right level, practice everyday speech and build toward confident independent use.</p>{state==="Active"?<Link className={styles.primaryButton} href="/learn/courses">Continue current path</Link>:<button className={styles.secondaryButton}>Choose language</button>}</article>)}</div>
+</>}
