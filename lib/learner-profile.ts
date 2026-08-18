@@ -23,6 +23,27 @@ export const DEFAULT_LEARNER_PROFILE: LearnerProfile = {
 };
 
 const STORAGE_KEY = "aira.learner.profile.v1";
+const STUDENT_KEY = "aira.learner.student-id.v1";
+
+function studentId() {
+  if (typeof window === "undefined") return "server";
+  let id = window.localStorage.getItem(STUDENT_KEY);
+  if (!id) {
+    id = typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `student-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    window.localStorage.setItem(STUDENT_KEY, id);
+  }
+  return id;
+}
+
+function syncProfile(profile: LearnerProfile) {
+  if (typeof window === "undefined") return;
+  void fetch("/api/learn/profile", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: studentId(), learningLanguage: profile.targetLanguage, level: profile.currentLevel, streak: profile.streak, completedLessons: profile.completedLessons.length, lastActiveAt: profile.lastActivityAt, accessStatus: "active" }) }).catch(() => undefined);
+}
+
+function recordLessonCompleted(profile: LearnerProfile, lessonId: string) {
+  if (typeof window === "undefined") return;
+  void fetch("/api/learn/events", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ studentId: studentId(), type: "lesson_completed", language: profile.targetLanguage, level: profile.currentLevel, lessonId }) }).catch(() => undefined);
+}
 
 export function loadLearnerProfile(): LearnerProfile {
   if (typeof window === "undefined") return DEFAULT_LEARNER_PROFILE;
@@ -38,13 +59,13 @@ export function loadLearnerProfile(): LearnerProfile {
 export function saveLearnerProfile(profile: LearnerProfile) {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+  syncProfile(profile);
 }
 
 export function markLessonComplete(lessonId: string) {
   const profile = loadLearnerProfile();
-  const completedLessons = profile.completedLessons.includes(lessonId)
-    ? profile.completedLessons
-    : [...profile.completedLessons, lessonId];
+  const isNew = !profile.completedLessons.includes(lessonId);
+  const completedLessons = isNew ? [...profile.completedLessons, lessonId] : profile.completedLessons;
   const next = {
     ...profile,
     completedLessons,
@@ -52,5 +73,6 @@ export function markLessonComplete(lessonId: string) {
     lastActivityAt: new Date().toISOString(),
   };
   saveLearnerProfile(next);
+  if (isNew) recordLessonCompleted(next, lessonId);
   return next;
 }
