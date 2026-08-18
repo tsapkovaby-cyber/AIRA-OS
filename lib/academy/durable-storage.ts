@@ -20,6 +20,14 @@ export async function insertLearningEvent(event: LearningEvent) {
   return res.ok;
 }
 
+export async function readStudent(id: string): Promise<StudentRecord | null> {
+  if (!configured()) return null;
+  const res = await fetch(`${url}/rest/v1/academy_students?id=eq.${encodeURIComponent(id)}&select=*&limit=1`, { headers: headers(), cache: "no-store" });
+  if (!res.ok) return null;
+  const rows = await res.json() as StudentRecord[];
+  return rows[0] ?? null;
+}
+
 export async function readStudents(): Promise<StudentRecord[]> {
   if (!configured()) return [];
   const res = await fetch(`${url}/rest/v1/academy_students?select=*&order=lastActiveAt.desc.nullslast`, { headers: headers(), cache: "no-store" });
