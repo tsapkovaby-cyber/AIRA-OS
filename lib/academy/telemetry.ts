@@ -27,8 +27,10 @@ export type AcademyTelemetrySnapshot = {
   events: LearningEvent[];
 };
 
+export type AcademyTelemetrySource = "supabase_live" | "environment_snapshot" | "not_configured";
+
 export type AcademyAnalytics = {
-  source: "environment_snapshot" | "not_configured";
+  source: AcademyTelemetrySource;
   generatedAt: string | null;
   totalStudents: number;
   activeToday: number;
@@ -40,6 +42,7 @@ export type AcademyAnalytics = {
   topLevel: string | null;
   languages: Array<{ name: string; students: number }>;
   levels: Array<{ name: string; students: number }>;
+  recentEvents: LearningEvent[];
 };
 
 function safeSnapshot(value: string | undefined): AcademyTelemetrySnapshot | null {
@@ -65,9 +68,11 @@ function countBy(values: string[]) {
     .sort((a, b) => b.students - a.students || a.name.localeCompare(b.name));
 }
 
-export function getAcademyAnalytics(now = new Date()): AcademyAnalytics {
-  const snapshot = getAcademyTelemetrySnapshot();
-  const source = process.env.AIRA_ACADEMY_TELEMETRY_JSON ? "environment_snapshot" : "not_configured";
+export function buildAcademyAnalytics(
+  snapshot: AcademyTelemetrySnapshot,
+  source: AcademyTelemetrySource,
+  now = new Date(),
+): AcademyAnalytics {
   const day = now.toISOString().slice(0, 10);
   const events = snapshot.events;
   const started = events.filter((event) => event.type === "lesson_started").length;
@@ -75,6 +80,9 @@ export function getAcademyAnalytics(now = new Date()): AcademyAnalytics {
   const completedLessons = Math.max(completedEvents, snapshot.students.reduce((sum, student) => sum + Math.max(0, student.completedLessons || 0), 0));
   const languages = countBy(snapshot.students.map((student) => student.learningLanguage));
   const levels = countBy(snapshot.students.map((student) => student.level));
+  const recentEvents = [...events]
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    .slice(0, 12);
 
   return {
     source,
@@ -89,5 +97,12 @@ export function getAcademyAnalytics(now = new Date()): AcademyAnalytics {
     topLevel: levels[0]?.name ?? null,
     languages,
     levels,
+    recentEvents,
   };
+}
+
+export function getAcademyAnalytics(now = new Date()): AcademyAnalytics {
+  const snapshot = getAcademyTelemetrySnapshot();
+  const source: AcademyTelemetrySource = process.env.AIRA_ACADEMY_TELEMETRY_JSON ? "environment_snapshot" : "not_configured";
+  return buildAcademyAnalytics(snapshot, source, now);
 }
