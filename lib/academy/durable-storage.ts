@@ -20,6 +20,33 @@ export async function insertLearningEvent(event: LearningEvent) {
   return res.ok;
 }
 
+export async function upsertLearnerProgress(studentId: string, profile: unknown) {
+  if (!configured()) return false;
+  const res = await fetch(`${url}/rest/v1/academy_progress?on_conflict=student_id`, {
+    method: "POST",
+    headers: headers({ Prefer: "resolution=merge-duplicates,return=minimal" }),
+    body: JSON.stringify({ student_id: studentId, profile, updated_at: new Date().toISOString() }),
+    cache: "no-store",
+  });
+  return res.ok;
+}
+
+export async function readLearnerProgress(studentId: string): Promise<unknown | null> {
+  if (!configured()) return null;
+  const res = await fetch(`${url}/rest/v1/academy_progress?student_id=eq.${encodeURIComponent(studentId)}&select=profile&limit=1`, { headers: headers(), cache: "no-store" });
+  if (!res.ok) return null;
+  const rows = await res.json() as Array<{ profile?: unknown }>;
+  return rows[0]?.profile ?? null;
+}
+
+export async function readStudent(id: string): Promise<StudentRecord | null> {
+  if (!configured()) return null;
+  const res = await fetch(`${url}/rest/v1/academy_students?id=eq.${encodeURIComponent(id)}&select=*&limit=1`, { headers: headers(), cache: "no-store" });
+  if (!res.ok) return null;
+  const rows = await res.json() as StudentRecord[];
+  return rows[0] ?? null;
+}
+
 export async function readStudents(): Promise<StudentRecord[]> {
   if (!configured()) return [];
   const res = await fetch(`${url}/rest/v1/academy_students?select=*&order=lastActiveAt.desc.nullslast`, { headers: headers(), cache: "no-store" });
