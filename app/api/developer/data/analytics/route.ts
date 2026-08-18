@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
-import { getAcademyAnalytics } from "@/lib/academy/telemetry";
+import { getLiveAcademyTelemetry } from "@/lib/academy/live-telemetry";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  return NextResponse.json(getAcademyAnalytics());
+  const { analytics } = await getLiveAcademyTelemetry();
+  return NextResponse.json(analytics);
 }
