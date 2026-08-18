@@ -60,7 +60,9 @@ export function getAcademyTelemetrySnapshot(): AcademyTelemetrySnapshot {
 function countBy(values: string[]) {
   const counts = new Map<string, number>();
   for (const value of values.filter(Boolean)) counts.set(value, (counts.get(value) ?? 0) + 1);
-  return [...counts.entries()].map(([name, students]) => ({ name, students })).sort((a, b) => b.students - a.students || a.name.localeCompare(b.name));
+  return Array.from(counts.entries())
+    .map(([name, students]) => ({ name, students }))
+    .sort((a, b) => b.students - a.students || a.name.localeCompare(b.name));
 }
 
 export function getAcademyAnalytics(now = new Date()): AcademyAnalytics {
