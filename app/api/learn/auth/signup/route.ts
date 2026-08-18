@@ -1,0 +1,15 @@
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { setStudentSession, signUpStudent } from "../../../../../lib/academy/student-auth";
+
+const Input = z.object({ email: z.string().email(), password: z.string().min(8) });
+
+export async function POST(req: Request) {
+  const parsed = Input.safeParse(await req.json());
+  if (!parsed.success) return NextResponse.json({ error: "INVALID_INPUT" }, { status: 400 });
+  const result = await signUpStudent(parsed.data.email, parsed.data.password);
+  if (!result.ok) return NextResponse.json({ error: result.code }, { status: result.code === "AUTH_NOT_CONFIGURED" ? 503 : 400 });
+  if (result.confirmationRequired) return NextResponse.json({ ok: true, confirmationRequired: true }, { status: 202 });
+  setStudentSession(result.accessToken, result.refreshToken, result.expiresIn);
+  return NextResponse.json({ ok: true, confirmationRequired: false }, { status: 201 });
+}
