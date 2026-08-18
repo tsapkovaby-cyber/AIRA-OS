@@ -1,3 +1,22 @@
 import Link from "next/link";
+import { getAcademyAnalytics, getAcademyTelemetrySnapshot } from "@/lib/academy/telemetry";
 
-export default function FounderStudents(){return <main><div className="page-head"><div><p className="eyebrow">FOUNDER · УЧЕНИКИ</p><h1>Ученики и доступы</h1><p className="muted">Рабочая зона для аккаунтов, языков, уровней, прогресса и статусов доступа.</p></div><Link className="button" href="/developer">← Кабинет основателя</Link></div><section className="card"><h2>Текущие данные</h2><p className="muted">Cloud student database пока не подключена, поэтому реальные ученики появятся здесь после подключения student-auth + persistent storage.</p></section><div className="grid" style={{marginTop:16}}><article className="card metric"><span className="eyebrow">ВСЕГО УЧЕНИКОВ</span><div className="value">0</div><span className="muted">Нет серверных аккаунтов</span></article><article className="card metric"><span className="eyebrow">АКТИВНЫЕ СЕГОДНЯ</span><div className="value">0</div><span className="muted">Нет learner events</span></article><article className="card metric"><span className="eyebrow">ЗАВЕРШИЛИ УРОК</span><div className="value">0</div><span className="muted">Нет cloud progress</span></article><article className="card metric"><span className="eyebrow">ПЛАТНЫЙ ДОСТУП</span><div className="value">0</div><span className="muted">Billing не подключён</span></article></div><section className="table-wrap" style={{marginTop:20}}><table><thead><tr><th>Ученик</th><th>Язык</th><th>Уровень</th><th>Прогресс</th><th>Статус</th></tr></thead><tbody><tr><td colSpan={5} className="empty">Пока нет серверных учеников. После подключения БД список будет заполняться автоматически.</td></tr></tbody></table></section></main>}
+export const dynamic = "force-dynamic";
+
+export default function FounderStudents(){
+  const snapshot = getAcademyTelemetrySnapshot();
+  const analytics = getAcademyAnalytics();
+  const configured = analytics.source !== "not_configured";
+  return <main>
+    <div className="page-head"><div><p className="eyebrow">FOUNDER · УЧЕНИКИ</p><h1>Ученики и доступы</h1><p className="muted">Реальные student records, языки, уровни, прогресс и статусы доступа.</p></div><Link className="button" href="/developer">← Кабинет основателя</Link></div>
+    <section className="card"><h2>Источник данных</h2><p className="muted">{configured ? `Подключён server telemetry snapshot${analytics.generatedAt ? ` · обновлён ${analytics.generatedAt}` : ""}.` : "Постоянное student storage ещё не подключено. Кабинет использует готовый server telemetry contract и показывает честные нули до подключения источника."}</p></section>
+    <div className="grid" style={{marginTop:16}}>
+      <article className="card metric"><span className="eyebrow">ВСЕГО УЧЕНИКОВ</span><div className="value">{analytics.totalStudents}</div><span className="muted">Server student records</span></article>
+      <article className="card metric"><span className="eyebrow">АКТИВНЫЕ СЕГОДНЯ</span><div className="value">{analytics.activeToday}</div><span className="muted">По lastActiveAt</span></article>
+      <article className="card metric"><span className="eyebrow">ЗАВЕРШЁННЫЕ УРОКИ</span><div className="value">{analytics.completedLessons}</div><span className="muted">Progress events + student totals</span></article>
+      <article className="card metric"><span className="eyebrow">VOICE СЕССИИ</span><div className="value">{analytics.voiceSessions}</div><span className="muted">Server telemetry</span></article>
+    </div>
+    <section className="table-wrap" style={{marginTop:20}}><table><thead><tr><th>Ученик</th><th>Язык</th><th>Уровень</th><th>Уроки</th><th>Streak</th><th>Статус</th></tr></thead><tbody>{snapshot.students.length ? snapshot.students.map(student=><tr key={student.id}><td>{student.displayName || student.email || student.id}</td><td>{student.learningLanguage || "—"}</td><td>{student.level || "—"}</td><td>{student.completedLessons || 0}</td><td>{student.streak || 0}</td><td>{student.accessStatus || "active"}</td></tr>) : <tr><td colSpan={6} className="empty">Нет student records. После подключения persistent storage таблица заполнится автоматически через тот же data-layer.</td></tr>}</tbody></table></section>
+    <div className="controls" style={{marginTop:20}}><Link className="button" href="/api/developer/data/students">Открыть Students API →</Link><Link className="button" href="/developer/analytics">Перейти к аналитике →</Link></div>
+  </main>
+}
